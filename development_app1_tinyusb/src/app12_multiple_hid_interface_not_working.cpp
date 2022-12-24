@@ -1,3 +1,4 @@
+#include "Adafruit_USBD_HID_mod.h"
 #include "BoardLED.hpp"
 #include "Button.hpp"
 #include <Adafruit_TinyUSB.h>
@@ -90,7 +91,7 @@ static void updateButtons() {
     }
   }
 
-  boardLED.write(1, buttons[3].hold);
+  boardLED.write(1, buttons[0].hold);
 }
 
 static uint16_t get_report_callback(uint8_t report_id, hid_report_type_t report_type, uint8_t *buffer, uint16_t reqlen) {
@@ -104,9 +105,9 @@ static void set_report_callback(uint8_t report_id, hid_report_type_t report_type
 void app12Entry() {
   boardLED.initialize();
 
-  usb_hid_2.setReportCallback(get_report_callback, set_report_callback);
-
   usb_hid.begin();
+
+  usb_hid_2.setReportCallback(get_report_callback, set_report_callback);
   usb_hid_2.begin();
 
   boardLED.write(2, true);
