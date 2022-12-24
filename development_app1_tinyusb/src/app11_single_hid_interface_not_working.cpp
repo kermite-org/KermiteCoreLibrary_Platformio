@@ -98,7 +98,7 @@ static void set_report_callback(uint8_t report_id, hid_report_type_t report_type
   usb_hid.sendReport(RID_GENERIC_INOUT, buffer, bufsize);
 }
 
-void app1Entry() {
+void app11Entry() {
   boardLED.initialize();
 
   usb_hid.setReportCallback(get_report_callback, set_report_callback);
