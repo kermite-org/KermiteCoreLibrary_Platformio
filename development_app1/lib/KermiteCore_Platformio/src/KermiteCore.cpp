@@ -1,5 +1,5 @@
 #include "KermiteCore.h"
-#include "KermiteUsbDriver.h"
+#include "device/KermiteUsbDriver.h"
 
 void KermiteCore::begin() {
   kermiteUsbDriver_initialize();
