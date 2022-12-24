@@ -1,14 +1,16 @@
 #ifdef USE_TINYUSB
-#include "KermiteUsbDriver.h"
+#include "usbIoCore.h"
 #include <Arduino.h>
 
 #include <Adafruit_TinyUSB.h>
 
-static const uint8_t desc_hid_report[] = { TUD_HID_REPORT_DESC_KEYBOARD() };
+static const uint8_t desc_hid_report[] = {
+  TUD_HID_REPORT_DESC_KEYBOARD(),
+};
 
 static Adafruit_USBD_HID usb_hid;
 
-void kermiteUsbDriver_initialize() {
+void usbIoCore_initialize() {
   usb_hid.setPollInterval(2);
   usb_hid.setReportDescriptor(desc_hid_report, sizeof(desc_hid_report));
   usb_hid.begin();
@@ -16,7 +18,7 @@ void kermiteUsbDriver_initialize() {
     delay(1);
 }
 
-void kermiteUsbDriver_sendKeyboardReport(
+void usbIoCore_hidKeyboard_writeReport(
     uint8_t modifier,
     uint8_t *hidKeycodes) {
   if (usb_hid.ready()) {
