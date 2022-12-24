@@ -2,20 +2,33 @@
 
 // tested on Tiny2040
 
-void setup() {
-  pinMode(20, OUTPUT);
-  digitalWrite(20, HIGH);
-  pinMode(19, OUTPUT);
-  digitalWrite(19, HIGH);
-  pinMode(18, OUTPUT);
-  digitalWrite(18, HIGH);
+static const int pinLEDs[3] = {20, 19, 18};
 
-  pinMode(7, INPUT_PULLUP);
+static void initBoardLEDs() {
+  for (int i = 0; i < 3; i++) {
+    int pin = pinLEDs[i];
+    pinMode(pin, OUTPUT);
+    digitalWrite(pin, HIGH);
+  }
+}
+
+static void writeBoardLED(int index, bool state) {
+  int pin = pinLEDs[index];
+  digitalWrite(pin, !state);
+}
+
+static void initBoardButton() { pinMode(7, INPUT_PULLUP); }
+
+static bool readBoardButton() { return digitalRead(7) == LOW; }
+
+void setup() {
+  initBoardLEDs();
+  initBoardButton();
 }
 
 void updateButton() {
   static bool pressed = false;
-  bool nextPressed = digitalRead(7) == LOW;
+  bool nextPressed = readBoardButton();
   if (!pressed && nextPressed) {
     Serial.printf("pressed\n");
   }
@@ -23,16 +36,16 @@ void updateButton() {
     Serial.printf("released\n");
   }
   pressed = nextPressed;
-  digitalWrite(19, !pressed);
+  writeBoardLED(1, pressed);
 }
 
 void loop() {
   static int cnt = 0;
   if (cnt % 1000 == 0) {
-    digitalWrite(20, LOW);
+    writeBoardLED(0, true);
   }
   if (cnt % 1000 == 1) {
-    digitalWrite(20, HIGH);
+    writeBoardLED(0, false);
   }
   if (cnt % 10 == 0) {
     updateButton();
