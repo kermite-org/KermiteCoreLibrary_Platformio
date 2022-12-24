@@ -6,9 +6,9 @@ extern void app1Entry();
 extern void app2Entry();
 
 void setup() {
-  // app0Entry();
+  app0Entry();
   // app1Entry();
-  app2Entry();
+  //app2Entry();
 }
 
 void loop() {}
