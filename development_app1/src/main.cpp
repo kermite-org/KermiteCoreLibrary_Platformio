@@ -3,6 +3,12 @@
 
 // tested on Tiny2040
 
+static const uint8_t desc_hid_report[] = {TUD_HID_REPORT_DESC_KEYBOARD()};
+
+static Adafruit_USBD_HID usb_hid;
+
+static uint8_t hidKeycodes[6];
+
 static const int pinLEDs[3] = {20, 19, 18};
 
 static void initBoardLEDs() {
@@ -21,14 +27,6 @@ static void writeBoardLED(int index, bool state) {
 static void initBoardButton() { pinMode(7, INPUT_PULLUP); }
 
 static bool readBoardButton() { return digitalRead(7) == LOW; }
-
-extern Adafruit_USBD_Device USBDevice;
-
-static const uint8_t desc_hid_report[] = {TUD_HID_REPORT_DESC_KEYBOARD()};
-
-static Adafruit_USBD_HID usb_hid;
-
-static uint8_t hidKeycodes[6];
 
 void setup() {
   initBoardLEDs();
