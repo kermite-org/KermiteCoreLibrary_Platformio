@@ -6,7 +6,7 @@
 
 static KermiteCore kermite;
 
-static const int pinLEDs[3] = {20, 19, 18};
+static const int pinLEDs[3] = { 20, 19, 18 };
 
 static void initBoardLEDs() {
   for (int i = 0; i < 3; i++) {
@@ -21,9 +21,13 @@ static void writeBoardLED(int index, bool state) {
   digitalWrite(pin, !state);
 }
 
-static void initBoardButton() { pinMode(7, INPUT_PULLUP); }
+static void initBoardButton() {
+  pinMode(7, INPUT_PULLUP);
+}
 
-static bool readBoardButton() { return digitalRead(7) == LOW; }
+static bool readBoardButton() {
+  return digitalRead(7) == LOW;
+}
 
 void setup() {
   initBoardLEDs();
