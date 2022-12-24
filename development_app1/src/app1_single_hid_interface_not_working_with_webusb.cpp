@@ -5,22 +5,27 @@
 
 // tested on Tiny2040
 
+// the program runs but cannot access to RawHID from PC by WebUSB restriction
+// A RawHID usage which belongs to the interface with another keyboard or mouse usage cannot be accessed from WebUSB
+
 enum {
   RID_KEYBOARD = 1,
   RID_MOUSE,
   RID_CONSUMER_CONTROL,
+  RID_GENERIC_INOUT,
 };
 
 static const uint8_t desc_hid_report[] = {
+  TUD_HID_REPORT_DESC_GENERIC_INOUT(64, HID_REPORT_ID(RID_GENERIC_INOUT)),
   TUD_HID_REPORT_DESC_KEYBOARD(HID_REPORT_ID(RID_KEYBOARD)),
   TUD_HID_REPORT_DESC_MOUSE(HID_REPORT_ID(RID_MOUSE)),
-  TUD_HID_REPORT_DESC_CONSUMER(HID_REPORT_ID(RID_CONSUMER_CONTROL))
+  TUD_HID_REPORT_DESC_CONSUMER(HID_REPORT_ID(RID_CONSUMER_CONTROL)),
 };
 
-Adafruit_USBD_HID usb_hid(desc_hid_report, sizeof(desc_hid_report), HID_ITF_PROTOCOL_NONE, 2, false);
+static Adafruit_USBD_HID usb_hid(desc_hid_report, sizeof(desc_hid_report), HID_ITF_PROTOCOL_NONE, 2, false);
 
 static BoardLED boardLED(20, 19, 18, true);
-static Button buttons[] = { Button(7), Button(5), Button(2) };
+static Button buttons[] = { Button(7), Button(5), Button(2), Button(26) };
 
 static void sendHidKey(uint hidKeycode, bool pressed) {
   static uint8_t hidKeycodes[6];
@@ -40,7 +45,6 @@ static void updateButton() {
     if (button.released) {
       sendHidKey(4, false);
     }
-    boardLED.write(1, button.hold);
   }
 
   {
@@ -68,14 +72,38 @@ static void updateButton() {
       }
     }
   }
+
+  {
+    static uint8_t rawHidTxBuf[64];
+
+    Button &button = buttons[3];
+    button.update();
+    if (button.pressed) {
+      if (usb_hid.ready()) {
+        rawHidTxBuf[0] = 100;
+        rawHidTxBuf[1] = 200;
+        usb_hid.sendReport(RID_GENERIC_INOUT, rawHidTxBuf, sizeof(rawHidTxBuf));
+      }
+    }
+  }
+
+  boardLED.write(1, buttons[3].hold);
+}
+
+static uint16_t get_report_callback(uint8_t report_id, hid_report_type_t report_type, uint8_t *buffer, uint16_t reqlen) {
+  return 0;
+}
+
+static void set_report_callback(uint8_t report_id, hid_report_type_t report_type, uint8_t const *buffer, uint16_t bufsize) {
+  usb_hid.sendReport(RID_GENERIC_INOUT, buffer, bufsize);
 }
 
 void app1Entry() {
   boardLED.initialize();
 
-  usb_hid.setPollInterval(2);
-
+  usb_hid.setReportCallback(get_report_callback, set_report_callback);
   usb_hid.begin();
+
   boardLED.write(0, true);
   while (!USBDevice.mounted())
     delay(1);
@@ -93,6 +121,7 @@ void app1Entry() {
       updateButton();
     }
     cnt++;
+    yield();
     delay(1);
   }
 }
