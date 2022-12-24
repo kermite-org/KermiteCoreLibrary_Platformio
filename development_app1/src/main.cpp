@@ -28,6 +28,8 @@ static const uint8_t desc_hid_report[] = {TUD_HID_REPORT_DESC_KEYBOARD()};
 
 static Adafruit_USBD_HID usb_hid;
 
+static uint8_t hidKeycodes[6];
+
 void setup() {
   initBoardLEDs();
   initBoardButton();
@@ -42,13 +44,14 @@ void setup() {
   writeBoardLED(0, false);
 }
 
-static void sendHidKey(char chr, bool pressed) {
+static void sendHidKey(uint hidKeycode, bool pressed) {
   if (usb_hid.ready()) {
     if (pressed) {
-      usb_hid.keyboardPress(0, chr);
+      hidKeycodes[0] = hidKeycode;
     } else {
-      usb_hid.keyboardRelease(0);
+      hidKeycodes[0] = 0;
     }
+    usb_hid.keyboardReport(0, 0, hidKeycodes);
   }
 }
 
@@ -57,11 +60,11 @@ static void updateButton() {
   bool nextPressed = readBoardButton();
   if (!pressed && nextPressed) {
     Serial.printf("pressed\n");
-    sendHidKey('a', true);
+    sendHidKey(4, true);
   }
   if (pressed && !nextPressed) {
     Serial.printf("released\n");
-    sendHidKey('a', false);
+    sendHidKey(4, false);
   }
   pressed = nextPressed;
   writeBoardLED(1, pressed);
