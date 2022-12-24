@@ -9,9 +9,34 @@ void setup() {
   digitalWrite(19, HIGH);
   pinMode(18, OUTPUT);
   digitalWrite(18, HIGH);
+
+  pinMode(7, INPUT_PULLUP);
+}
+
+void updateButton() {
+  static bool pressed = false;
+  bool nextPressed = digitalRead(7) == LOW;
+  if (!pressed && nextPressed) {
+    Serial.printf("pressed\n");
+  }
+  if (pressed && !nextPressed) {
+    Serial.printf("released\n");
+  }
+  pressed = nextPressed;
+  digitalWrite(19, !pressed);
 }
 
 void loop() {
-  digitalWrite(20, !digitalRead(20));
-  delay(100);
+  static int cnt = 0;
+  if (cnt % 1000 == 0) {
+    digitalWrite(20, LOW);
+  }
+  if (cnt % 1000 == 1) {
+    digitalWrite(20, HIGH);
+  }
+  if (cnt % 10 == 0) {
+    updateButton();
+  }
+  cnt++;
+  delay(1);
 }
