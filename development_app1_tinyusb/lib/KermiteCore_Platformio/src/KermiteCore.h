@@ -5,5 +5,6 @@
 class KermiteCore {
 public:
   void begin();
-  void issueInputKeyStateChange(uint8_t keyIndex, bool isDown);
+  void issueKeyState(uint8_t keyIndex, bool isDown);
+  void processUpdate();
 };

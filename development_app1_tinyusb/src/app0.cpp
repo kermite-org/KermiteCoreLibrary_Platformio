@@ -15,11 +15,11 @@ static void updateButton() {
   button.update();
   if (button.pressed) {
     Serial.printf("pressed\n");
-    kermite.issueInputKeyStateChange(0, true);
+    kermite.issueKeyState(0, true);
   }
   if (button.released) {
     Serial.printf("released\n");
-    kermite.issueInputKeyStateChange(0, false);
+    kermite.issueKeyState(0, false);
   }
   boardLed.write(1, button.hold);
 }
@@ -41,6 +41,7 @@ void app0Entry() {
     if (cnt % 10 == 0) {
       updateButton();
     }
+    kermite.processUpdate();
     cnt++;
     yield();
     delay(1);

@@ -11,7 +11,7 @@ function delayMs(ms) {
 async function start() {
   const devices = (
     await navigator.hid.requestDevice({
-      filters: [{ vendorId: 0x2e8a, productId: 0xf00a }],
+      filters: [{ vendorId: 0xf055, productId: 0xa57a }],
     })
   ).filter(isDeviceRawHidInterface);
 
