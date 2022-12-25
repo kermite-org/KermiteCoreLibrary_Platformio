@@ -91,10 +91,6 @@ static void updateButtons() {
   boardLED.write(1, buttons[3].hold);
 }
 
-static uint16_t get_report_callback(uint8_t report_id, hid_report_type_t report_type, uint8_t *buffer, uint16_t reqlen) {
-  return 0;
-}
-
 static void set_report_callback(uint8_t report_id, hid_report_type_t report_type, uint8_t const *buffer, uint16_t bufsize) {
   usb_hid_2.sendReport(0, buffer, bufsize);
 }
@@ -104,7 +100,7 @@ void app12Entry() {
 
   usb_hid.begin();
 
-  usb_hid_2.setReportCallback(get_report_callback, set_report_callback);
+  usb_hid_2.setReportCallback(NULL, set_report_callback);
   usb_hid_2.begin();
 
   boardLED.write(2, true);
