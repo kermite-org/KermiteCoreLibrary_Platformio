@@ -27,7 +27,7 @@ static const uint8_t desc_hid_report_2[] = {
 
 static Adafruit_USBD_HID usb_hid(desc_hid_report, sizeof(desc_hid_report), HID_ITF_PROTOCOL_NONE, 2, false);
 
-static Adafruit_USBD_HID usb_hid_2(desc_hid_report_2, sizeof(desc_hid_report_2), HID_ITF_PROTOCOL_NONE, 2, false);
+static Adafruit_USBD_HID usb_hid_2(desc_hid_report_2, sizeof(desc_hid_report_2), HID_ITF_PROTOCOL_NONE, 2, true);
 
 static BoardLED boardLED(20, 19, 18, true);
 static Button buttons[] = { Button(7), Button(5), Button(2), Button(26) };
@@ -36,7 +36,7 @@ static void sendHidKey(uint hidKeycode, bool pressed) {
   static uint8_t hidKeycodes[6];
   if (usb_hid.ready()) {
     hidKeycodes[0] = pressed ? hidKeycode : 0;
-    usb_hid.keyboardReport(0, 0, hidKeycodes);
+    usb_hid.keyboardReport(RID_KEYBOARD, 0, hidKeycodes);
   }
 }
 
@@ -91,7 +91,7 @@ static void updateButtons() {
     }
   }
 
-  boardLED.write(1, buttons[0].hold);
+  boardLED.write(1, buttons[3].hold);
 }
 
 static uint16_t get_report_callback(uint8_t report_id, hid_report_type_t report_type, uint8_t *buffer, uint16_t reqlen) {
@@ -105,10 +105,10 @@ static void set_report_callback(uint8_t report_id, hid_report_type_t report_type
 void app12Entry() {
   boardLED.initialize();
 
-  usb_hid.begin();
-
   usb_hid_2.setReportCallback(get_report_callback, set_report_callback);
   usb_hid_2.begin();
+
+  usb_hid.begin();
 
   boardLED.write(2, true);
   while (!USBDevice.mounted()) //NEVER RETURN

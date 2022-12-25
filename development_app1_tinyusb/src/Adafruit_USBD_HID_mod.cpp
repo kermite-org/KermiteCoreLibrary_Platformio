@@ -36,8 +36,8 @@ uint8_t const _ascii2keycode[128][2] = { HID_ASCII_TO_KEYCODE };
 // TODO multiple instances
 // static Adafruit_USBD_HID *_hid_dev = NULL;
 
-static int instanceNum = 0;
-static Adafruit_USBD_HID *_hid_devs[5] = { NULL, NULL, NULL, NULL, NULL };
+static uint8_t _instance_count = 0;
+static Adafruit_USBD_HID *_hid_devs[2] = { NULL, NULL };
 
 //------------- IMPLEMENTATION -------------//
 
@@ -128,9 +128,6 @@ uint16_t Adafruit_USBD_HID::makeItfDesc(uint8_t itfnum, uint8_t *buf,
 uint16_t Adafruit_USBD_HID::getInterfaceDescriptor(uint8_t itfnum, uint8_t *buf,
                                                    uint16_t bufsize) {
 
-  // _instance_index = itfnum;
-  // _hid_devs[itfnum] = this;
-
   // usb core will automatically update endpoint number
   return makeItfDesc(itfnum, buf, bufsize, EPIN, EPOUT);
 }
@@ -140,9 +137,9 @@ bool Adafruit_USBD_HID::begin(void) {
     return false;
   }
 
-  // _hid_dev = this;
-  _instance_index = instanceNum++;
-  _hid_devs[_instance_index] = this;
+  _instance = _instance_count++;
+  _hid_devs[_instance] = this;
+
   return true;
 }
 
@@ -150,7 +147,7 @@ bool Adafruit_USBD_HID::ready(void) { return tud_hid_ready(); }
 
 bool Adafruit_USBD_HID::sendReport(uint8_t report_id, void const *report,
                                    uint8_t len) {
-  return tud_hid_n_report(_instance_index, report_id, report, len);
+  return tud_hid_n_report(_instance, report_id, report, len);
 }
 
 // bool Adafruit_USBD_HID::sendReport8(uint8_t report_id, uint8_t num) {
@@ -158,7 +155,7 @@ bool Adafruit_USBD_HID::sendReport(uint8_t report_id, void const *report,
 // }
 
 bool Adafruit_USBD_HID::sendReport16(uint8_t report_id, uint16_t num) {
-  return tud_hid_n_report(_instance_index, report_id, &num, sizeof(num));
+  return tud_hid_n_report(_instance, report_id, &num, sizeof(num));
 }
 
 // bool Adafruit_USBD_HID::sendReport32(uint8_t report_id, uint32_t num) {
@@ -171,9 +168,9 @@ extern "C" {
 // Invoked when received GET HID REPORT DESCRIPTOR
 // Application return pointer to descriptor, whose contents must exist long
 // enough for transfer to complete
-uint8_t const *tud_hid_descriptor_report_cb(uint8_t itf) {
+uint8_t const *tud_hid_descriptor_report_cb(uint8_t instance) {
   // (void)itf;
-  Adafruit_USBD_HID *_hid_dev = _hid_devs[itf];
+  Adafruit_USBD_HID *_hid_dev = _hid_devs[instance];
 
   if (!_hid_dev) {
     return NULL;
@@ -185,11 +182,11 @@ uint8_t const *tud_hid_descriptor_report_cb(uint8_t itf) {
 // Invoked when received GET_REPORT control request
 // Application must fill buffer report's content and return its length.
 // Return zero will cause the stack to STALL request
-uint16_t tud_hid_get_report_cb(uint8_t itf, uint8_t report_id,
+uint16_t tud_hid_get_report_cb(uint8_t instance, uint8_t report_id,
                                hid_report_type_t report_type, uint8_t *buffer,
                                uint16_t reqlen) {
   // (void)itf;
-  Adafruit_USBD_HID *_hid_dev = _hid_devs[itf];
+  Adafruit_USBD_HID *_hid_dev = _hid_devs[instance];
 
   if (!(_hid_dev && _hid_dev->_get_report_cb)) {
     return 0;
@@ -200,11 +197,11 @@ uint16_t tud_hid_get_report_cb(uint8_t itf, uint8_t report_id,
 
 // Invoked when received SET_REPORT control request or
 // received data on OUT endpoint ( Report ID = 0, Type = 0 )
-void tud_hid_set_report_cb(uint8_t itf, uint8_t report_id,
+void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id,
                            hid_report_type_t report_type, uint8_t const *buffer,
                            uint16_t bufsize) {
   // (void)itf;
-  Adafruit_USBD_HID *_hid_dev = _hid_devs[itf];
+  Adafruit_USBD_HID *_hid_dev = _hid_devs[instance];
 
   if (!(_hid_dev && _hid_dev->_set_report_cb)) {
     return;
@@ -221,7 +218,7 @@ void tud_hid_set_report_cb(uint8_t itf, uint8_t report_id,
 
 bool Adafruit_USBD_HID::keyboardReport(uint8_t report_id, uint8_t modifier,
                                        uint8_t keycode[6]) {
-  return tud_hid_n_keyboard_report(_instance_index, report_id, modifier, keycode);
+  return tud_hid_n_keyboard_report(_instance, report_id, modifier, keycode);
 }
 
 // bool Adafruit_USBD_HID::keyboardPress(uint8_t report_id, char ch) {
@@ -251,11 +248,11 @@ bool Adafruit_USBD_HID::mouseReport(uint8_t report_id, uint8_t buttons,
   // cache mouse button for other API such as move, scroll
   _mouse_button = buttons;
 
-  return tud_hid_n_mouse_report(_instance_index, report_id, buttons, x, y, vertical, horizontal);
+  return tud_hid_n_mouse_report(_instance, report_id, buttons, x, y, vertical, horizontal);
 }
 
 bool Adafruit_USBD_HID::mouseMove(uint8_t report_id, int8_t x, int8_t y) {
-  return tud_hid_n_mouse_report(_instance_index, report_id, _mouse_button, x, y, 0, 0);
+  return tud_hid_n_mouse_report(_instance, report_id, _mouse_button, x, y, 0, 0);
 }
 
 // bool Adafruit_USBD_HID::mouseScroll(uint8_t report_id, int8_t scroll,
