@@ -6,7 +6,13 @@
 
 // tested on Tiny2040
 
-// this code is not work since multiple HID interfaces is not supported in Adafruit_TinyUSB_Arduino
+// use patched Adafruit_USBD_HID_mod.h instead for original Adafruit_USBD_HID.cpp
+// to test this code, it is needed to exclude original Adafruit_USBD_HID.cpp from the build
+
+// to do so, change the line of original code
+// #if TUSB_OPT_DEVICE_ENABLED && CFG_TUD_HID
+// to
+// #if TUSB_OPT_DEVICE_ENABLED && CFG_TUD_HID && 0
 
 enum {
   RID_KEYBOARD = 1,
@@ -111,7 +117,7 @@ void app12Entry() {
   usb_hid.begin();
 
   boardLED.write(2, true);
-  while (!USBDevice.mounted()) //NEVER RETURN
+  while (!USBDevice.mounted())
     delay(1);
   boardLED.write(2, false);
 
