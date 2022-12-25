@@ -1,18 +1,9 @@
-#include "Adafruit_USBD_HID_mod.h"
 #include "BoardLED.hpp"
 #include "Button.hpp"
 #include <Adafruit_TinyUSB.h>
 #include <Arduino.h>
 
 // tested on Tiny2040
-
-// use patched Adafruit_USBD_HID_mod.h instead for original Adafruit_USBD_HID.cpp
-// to test this code, it is needed to exclude original Adafruit_USBD_HID.cpp from the build
-
-// to do so, change the line of original code
-// #if TUSB_OPT_DEVICE_ENABLED && CFG_TUD_HID
-// to
-// #if TUSB_OPT_DEVICE_ENABLED && CFG_TUD_HID && 0
 
 enum {
   RID_KEYBOARD = 1,
@@ -111,10 +102,10 @@ static void set_report_callback(uint8_t report_id, hid_report_type_t report_type
 void app12Entry() {
   boardLED.initialize();
 
+  usb_hid.begin();
+
   usb_hid_2.setReportCallback(get_report_callback, set_report_callback);
   usb_hid_2.begin();
-
-  usb_hid.begin();
 
   boardLED.write(2, true);
   while (!USBDevice.mounted())
