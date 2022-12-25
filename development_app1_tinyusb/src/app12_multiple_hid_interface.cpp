@@ -1,3 +1,4 @@
+#include "Adafruit_USBD_HID_mod.h"
 #include "BoardLED.hpp"
 #include "Button.hpp"
 #include <Adafruit_TinyUSB.h>
@@ -5,7 +6,13 @@
 
 // tested on Tiny2040
 
-// this code is not work since multiple HID interfaces is not supported in Adafruit_TinyUSB_Arduino
+// use patched Adafruit_USBD_HID_mod.h instead for original Adafruit_USBD_HID.cpp
+// to test this code, it is needed to exclude original Adafruit_USBD_HID.cpp from the build
+
+// to do so, change the line of original code
+// #if TUSB_OPT_DEVICE_ENABLED && CFG_TUD_HID
+// to
+// #if TUSB_OPT_DEVICE_ENABLED && CFG_TUD_HID && 0
 
 enum {
   RID_KEYBOARD = 1,
@@ -26,7 +33,7 @@ static const uint8_t desc_hid_report_2[] = {
 
 static Adafruit_USBD_HID usb_hid(desc_hid_report, sizeof(desc_hid_report), HID_ITF_PROTOCOL_NONE, 2, false);
 
-static Adafruit_USBD_HID usb_hid_2(desc_hid_report_2, sizeof(desc_hid_report_2), HID_ITF_PROTOCOL_NONE, 2, false);
+static Adafruit_USBD_HID usb_hid_2(desc_hid_report_2, sizeof(desc_hid_report_2), HID_ITF_PROTOCOL_NONE, 2, true);
 
 static BoardLED boardLED(20, 19, 18, true);
 static Button buttons[] = { Button(7), Button(5), Button(2), Button(26) };
@@ -35,7 +42,7 @@ static void sendHidKey(uint hidKeycode, bool pressed) {
   static uint8_t hidKeycodes[6];
   if (usb_hid.ready()) {
     hidKeycodes[0] = pressed ? hidKeycode : 0;
-    usb_hid.keyboardReport(0, 0, hidKeycodes);
+    usb_hid.keyboardReport(RID_KEYBOARD, 0, hidKeycodes);
   }
 }
 
@@ -105,12 +112,12 @@ void app12Entry() {
   boardLED.initialize();
 
   usb_hid_2.setReportCallback(get_report_callback, set_report_callback);
-
-  usb_hid.begin();
   usb_hid_2.begin();
 
+  usb_hid.begin();
+
   boardLED.write(2, true);
-  while (!USBDevice.mounted()) //NEVER RETURN
+  while (!USBDevice.mounted())
     delay(1);
   boardLED.write(2, false);
 

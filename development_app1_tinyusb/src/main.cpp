@@ -12,7 +12,7 @@ void setup() {
   // app1Entry();
   app2Entry();
   // app11Entry();
-  // app12Entry();
+  app12Entry();
 }
 
 void loop() {}
