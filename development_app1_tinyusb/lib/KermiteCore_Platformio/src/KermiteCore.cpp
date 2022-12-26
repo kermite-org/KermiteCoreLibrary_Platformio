@@ -1,6 +1,6 @@
 #include "KermiteCore.h"
-#include "device/debugUtils.h"
-#include "device/usbIoCore.h"
+#include "infrastructure/debugUtils.h"
+#include "infrastructure/usbIoCore.h"
 
 void KermiteCore::begin() {
   usbIoCore_initialize();
