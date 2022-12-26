@@ -42,7 +42,7 @@ static void updateButton() {
 
 void app1Entry() {
 
-  USBDevice.setID(0xF055, 0xA579);
+  USBDevice.setID(0xF055, 0xA57A);
   USBDevice.setManufacturerDescriptor("Kermite");
   USBDevice.setProductDescriptor("KermiteCore_Arduino");
 
