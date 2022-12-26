@@ -7,15 +7,14 @@
 
 enum {
   RID_KEYBOARD = 1,
-  RID_MOUSE,
-  RID_CONSUMER_CONTROL,
+  // RID_MOUSE,
+  // RID_CONSUMER_CONTROL,
 };
 
 static const uint8_t desc_hid_report[] = {
   TUD_HID_REPORT_DESC_KEYBOARD(HID_REPORT_ID(RID_KEYBOARD)),
-  TUD_HID_REPORT_DESC_MOUSE(HID_REPORT_ID(RID_MOUSE)),
-  TUD_HID_REPORT_DESC_CONSUMER(HID_REPORT_ID(RID_CONSUMER_CONTROL)),
-
+  // TUD_HID_REPORT_DESC_MOUSE(HID_REPORT_ID(RID_MOUSE)),
+  // TUD_HID_REPORT_DESC_CONSUMER(HID_REPORT_ID(RID_CONSUMER_CONTROL)),
 };
 
 static const uint8_t desc_hid_report_2[] = {
@@ -49,31 +48,31 @@ static void updateButtons() {
     }
   }
 
-  {
-    Button &button = buttons[1];
-    button.update();
-    if (button.hold) {
-      int8_t delta = 5;
-      if (usb_hid.ready()) {
-        usb_hid.mouseMove(RID_MOUSE, delta, delta); // right + down
-      }
-    }
-  }
+  // {
+  //   Button &button = buttons[1];
+  //   button.update();
+  //   if (button.hold) {
+  //     int8_t delta = 5;
+  //     if (usb_hid.ready()) {
+  //       usb_hid.mouseMove(RID_MOUSE, delta, delta); // right + down
+  //     }
+  //   }
+  // }
 
-  {
-    Button &button = buttons[2];
-    button.update();
-    if (button.pressed) {
-      if (usb_hid.ready()) {
-        usb_hid.sendReport16(RID_CONSUMER_CONTROL, HID_USAGE_CONSUMER_VOLUME_DECREMENT);
-      }
-    }
-    if (button.released) {
-      if (usb_hid.ready()) {
-        usb_hid.sendReport16(RID_CONSUMER_CONTROL, 0);
-      }
-    }
-  }
+  // {
+  //   Button &button = buttons[2];
+  //   button.update();
+  //   if (button.pressed) {
+  //     if (usb_hid.ready()) {
+  //       usb_hid.sendReport16(RID_CONSUMER_CONTROL, HID_USAGE_CONSUMER_VOLUME_DECREMENT);
+  //     }
+  //   }
+  //   if (button.released) {
+  //     if (usb_hid.ready()) {
+  //       usb_hid.sendReport16(RID_CONSUMER_CONTROL, 0);
+  //     }
+  //   }
+  // }
 
   {
     static uint8_t rawHidTxBuf[64];

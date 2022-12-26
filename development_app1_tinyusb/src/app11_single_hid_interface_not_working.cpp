@@ -10,19 +10,19 @@
 
 enum {
   RID_KEYBOARD = 1,
-  RID_MOUSE,
-  RID_CONSUMER_CONTROL,
+  // RID_MOUSE,
+  // RID_CONSUMER_CONTROL,
   RID_GENERIC_INOUT,
 };
 
 static const uint8_t desc_hid_report[] = {
-  TUD_HID_REPORT_DESC_GENERIC_INOUT(64, HID_REPORT_ID(RID_GENERIC_INOUT)),
   TUD_HID_REPORT_DESC_KEYBOARD(HID_REPORT_ID(RID_KEYBOARD)),
-  TUD_HID_REPORT_DESC_MOUSE(HID_REPORT_ID(RID_MOUSE)),
-  TUD_HID_REPORT_DESC_CONSUMER(HID_REPORT_ID(RID_CONSUMER_CONTROL)),
+  // TUD_HID_REPORT_DESC_MOUSE(HID_REPORT_ID(RID_MOUSE)),
+  // TUD_HID_REPORT_DESC_CONSUMER(HID_REPORT_ID(RID_CONSUMER_CONTROL)),
+  TUD_HID_REPORT_DESC_GENERIC_INOUT(64, HID_REPORT_ID(RID_GENERIC_INOUT)),
 };
 
-static Adafruit_USBD_HID usb_hid(desc_hid_report, sizeof(desc_hid_report), HID_ITF_PROTOCOL_NONE, 2, false);
+static Adafruit_USBD_HID usb_hid(desc_hid_report, sizeof(desc_hid_report), HID_ITF_PROTOCOL_NONE, 2, true);
 
 static BoardLED boardLED(20, 19, 18, true);
 static Button buttons[] = { Button(7), Button(5), Button(2), Button(26) };
@@ -47,6 +47,7 @@ static void updateButton() {
     }
   }
 
+#if 0
   {
     Button &button = buttons[1];
     button.update();
@@ -72,6 +73,7 @@ static void updateButton() {
       }
     }
   }
+#endif
 
   {
     static uint8_t rawHidTxBuf[64];
@@ -90,10 +92,6 @@ static void updateButton() {
   boardLED.write(1, buttons[3].hold);
 }
 
-static uint16_t get_report_callback(uint8_t report_id, hid_report_type_t report_type, uint8_t *buffer, uint16_t reqlen) {
-  return 0;
-}
-
 static void set_report_callback(uint8_t report_id, hid_report_type_t report_type, uint8_t const *buffer, uint16_t bufsize) {
   usb_hid.sendReport(RID_GENERIC_INOUT, buffer, bufsize);
 }
@@ -101,7 +99,9 @@ static void set_report_callback(uint8_t report_id, hid_report_type_t report_type
 void app11Entry() {
   boardLED.initialize();
 
-  usb_hid.setReportCallback(get_report_callback, set_report_callback);
+  USBDevice.setID(0xF055, 0xA57A);
+
+  usb_hid.setReportCallback(NULL, set_report_callback);
   usb_hid.begin();
 
   boardLED.write(0, true);
