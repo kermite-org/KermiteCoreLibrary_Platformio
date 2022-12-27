@@ -73,7 +73,7 @@ static void emitGenericHidData(uint8_t *p) {
   }
   bool done = usbIoCore_genericHid_writeData(p);
   if (!done) {
-    printf("[warn] failed to write rawhid data\n");
+    xprintf("[warn] failed to write rawhid data\n");
   }
 }
 
@@ -162,13 +162,13 @@ static void processReadGenericHidData() {
   }
 
   if (cmd == RawHidOpcode_DeviceAttributesRequest) {
-    // printf("device attributes requested\n");
+    // xprintf("device attributes requested\n");
     emitDeviceAttributesResponse();
     rawHidFirstConnectDone = true;
   }
 
   if (cmd == RawHidOpcode_MemoryWriteTransactionStart) {
-    printf("memory write transaction start\n");
+    xprintf("memory write transaction start\n");
     //configurationMemoryReader_stop();
     emitStateNotification(ConfiguratorServantEvent_KeyMemoryUpdationStarted);
   }
@@ -179,7 +179,7 @@ static void processReadGenericHidData() {
     uint8_t len = p[3];
     uint8_t *src = p + 4;
     dataMemory_writeBytes(addr, src, len);
-    printf("%d bytes written at %d\n", len, addr);
+    xprintf("%d bytes written at %d\n", len, addr);
   }
 
   if (cmd == RawHidOpcode_MemoryChecksumRequest) {
@@ -187,29 +187,29 @@ static void processReadGenericHidData() {
     uint16_t addr = storageAddr_profileData + (p[1] << 8 | p[2]);
     uint16_t len = p[3] << 8 | p[4];
     uint8_t ck = 0;
-    printf("check, addr %d, len %d\n", addr, len);
+    xprintf("check, addr %d, len %d\n", addr, len);
     for (uint16_t i = 0; i < len; i++) {
       ck ^= dataMemory_readByte(addr + i);
     }
-    printf("ck: %d\n", ck);
+    xprintf("ck: %d\n", ck);
     emitMemoryChecksumResult(ck);
 
     dataMemory_writeWord(storageAddr_profileData - 2, len);
   }
 
   if (cmd == RawHidOpcode_MemoryWriteTransactionDone) {
-    printf("memory write transaction done\n");
+    xprintf("memory write transaction done\n");
     // configurationMemoryReader_initialize();
     emitStateNotification(ConfiguratorServantEvent_KeyMemoryUpdationDone);
   }
 
   if (cmd == RawHidOpcode_ParametersReadAllRequest) {
-    // printf("custom parameters read requested\n");
+    // xprintf("custom parameters read requested\n");
     emitCustomParametersReadResponse();
   }
 
   if (cmd == RawHidOpcode_ParametersWriteAllOperation) {
-    // printf("handle custom parameters bluk write\n");
+    // xprintf("handle custom parameters bluk write\n");
     uint8_t parameterIndexBase = p[1];
     uint8_t count = p[2];
     uint8_t *ptr = p + 3;
@@ -217,7 +217,7 @@ static void processReadGenericHidData() {
   }
 
   if (cmd == RawHidOpcode_ParameterSingleWriteOperation) {
-    // printf("handle custom parameters signle write\n");
+    // xprintf("handle custom parameters signle write\n");
     uint8_t parameterIndex = p[1];
     uint8_t value = p[2];
     // skipNotify = true;

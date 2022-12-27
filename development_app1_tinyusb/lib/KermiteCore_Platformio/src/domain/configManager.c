@@ -95,7 +95,7 @@ static void taskLazySave() {
     if (lazySaveTick == 0) {
       if (addrSystemParameters) {
         dataMemory_writeBytes(addrSystemParameters, systemParameterValues, NumSystemParameters);
-        printf("parameters saved\n");
+        xprintf("parameters saved\n");
       }
     }
   }
@@ -141,7 +141,7 @@ void fixSystemParametersLoaded() {
     if (!validateParameter(i, value)) {
       uint8_t defaultValue = ((uint8_t *)&systemParametersDefault)[i];
       systemParameterValues[i] = defaultValue;
-      printf("system parameter value fixed %d, %d --> %d\n", i, value, defaultValue);
+      xprintf("system parameter value fixed %d, %d --> %d\n", i, value, defaultValue);
     }
   }
 }
@@ -171,7 +171,7 @@ void configManager_initialize() {
       if (parametersRevision != Kermite_ConfigParametersRevision) {
         dataMemory_writeBytes(addrSystemParameters, (uint8_t *)&systemParametersDefault, NumSystemParameters);
         dataMemory_writeByte(addrParametersRevision, Kermite_ConfigParametersRevision);
-        printf("system parameters initialized\n");
+        xprintf("system parameters initialized\n");
       }
     }
     dataMemory_readBytes(addrSystemParameters, systemParameterValues, NumSystemParameters);
@@ -229,7 +229,7 @@ static void shiftParameter(uint8_t parameterIndex, int dir, bool roll) {
 }
 
 void configManager_handleSystemAction(uint8_t code, uint8_t payloadValue) {
-  // printf("handle system action %d %d\n", code, payloadValue);
+  // xprintf("handle system action %d %d\n", code, payloadValue);
   if (code == SystemAction_GlowToggle) {
     uint8_t isOn = systemParameterValues[SystemParameter_GlowActive];
     writeParameter(SystemParameter_GlowActive, isOn ^ 1);

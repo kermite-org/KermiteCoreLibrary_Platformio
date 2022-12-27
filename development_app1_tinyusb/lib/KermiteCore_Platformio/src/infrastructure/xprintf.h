@@ -1,3 +1,3 @@
 #pragma once
 
-void xprintf(const char *fmt, ...);
+void xxprintf(const char *fmt, ...);

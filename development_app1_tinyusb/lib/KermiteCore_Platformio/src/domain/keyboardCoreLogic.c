@@ -287,7 +287,7 @@ static void initAssignMemoryReader() {
   uint16_t keyMappingDataSize = dataStorage_getDataSize_profileData_keyAssigns();
   rs->assignsStartAddress = keyMappingDataLocation;
   rs->assignsEndAddress = keyMappingDataLocation + keyMappingDataSize;
-  printf("numLayers:%d keyMappingDataSize:%d\n", numLayers, keyMappingDataSize);
+  xprintf("numLayers:%d keyMappingDataSize:%d\n", numLayers, keyMappingDataSize);
 
   uint16_t layerListDataLocation = dataStorage_getDataAddress_profileData_layerList();
   for (uint8_t i = 0; i < 16; i++) {
@@ -538,7 +538,7 @@ static void layerMutations_activate(uint8_t layerIndex) {
     layerMutations_turnOffSiblingLayersIfNeed(layerIndex);
     layerState.layerActiveFlags |= 1 << layerIndex;
     // console.log(state.layerHoldFlags.map((a) => (a ? 1 : 0)).join(''));
-    printf("layer on %d\n", layerIndex);
+    xprintf("layer on %d\n", layerIndex);
     uint8_t modifiers = getLayerAttachedModifiers(layerIndex);
     if (modifiers) {
       OutputKeyStrokeAction action = createLayerModifierOutputAction(modifiers, true);
@@ -551,7 +551,7 @@ static void layerMutations_deactivate(uint8_t layerIndex) {
   if (layerMutations_isActive(layerIndex)) {
     layerState.layerActiveFlags &= ~(1 << layerIndex);
     // console.log(state.layerHoldFlags.map((a) => (a ? 1 : 0)).join(''));
-    printf("layer off %d\n", layerIndex);
+    xprintf("layer off %d\n", layerIndex);
     uint8_t modifiers = getLayerAttachedModifiers(layerIndex);
     if (modifiers) {
       OutputKeyStrokeAction action = createLayerModifierOutputAction(modifiers, false);
@@ -571,7 +571,7 @@ static void layerMutations_oneshot(uint8_t layerIndex) {
   layerMutations_activate(layerIndex);
   ls->oneshotLayerIndex = layerIndex;
   ls->oneshotCancelTick = -1;
-  printf("oneshot\n");
+  xprintf("oneshot\n");
 }
 
 static void layerMutations_clearOneshot() {
@@ -586,7 +586,7 @@ static void layerMutations_oneshotCancellerTicker(uint16_t ms) {
   if (ls->oneshotLayerIndex != -1 && ls->oneshotCancelTick >= 0) {
     ls->oneshotCancelTick += ms;
     if (ls->oneshotCancelTick > 50) {
-      printf("cancel oneshot\n");
+      xprintf("cancel oneshot\n");
       layerMutations_deactivate(ls->oneshotLayerIndex);
       ls->oneshotLayerIndex = -1;
       ls->oneshotCancelTick = -1;
@@ -806,14 +806,14 @@ typedef struct _KeySlot {
 } KeySlot;
 
 static void assignBinder_handleKeyOn(KeySlot *slot, uint32_t opWord) {
-  //printf("handleKeyOn %d %d\n", keyIndex, opWord);
+  //xprintf("handleKeyOn %d %d\n", keyIndex, opWord);
   handleOperationOn(opWord);
   slot->opWord = opWord;
 }
 
 static void assignBinder_handleKeyOff(KeySlot *slot) {
   if (slot->opWord) {
-    //printf("handleKeyOff %d\n", keyIndex);
+    //xprintf("handleKeyOff %d\n", keyIndex);
     handleOperationOff(slot->opWord);
     slot->opWord = 0;
   }
@@ -1193,7 +1193,7 @@ static void keySlot_tick(KeySlot *slot, uint8_t ms) {
       slot->liveLayerStateFlags = layerActiveFlags;
       slot->resolverProc = keySlotResolverFuncs[pAssignSet->assignType];
       if (DebugShowTrigger) {
-        printf("resolver attached %d %d\n", slot->keyIndex, pAssignSet->assignType);
+        xprintf("resolver attached %d %d\n", slot->keyIndex, pAssignSet->assignType);
       }
     }
   }
@@ -1205,7 +1205,7 @@ static void keySlot_tick(KeySlot *slot, uint8_t ms) {
       slot->liveLayerStateFlags = 0;
       slot->resolverProc = NULL;
       if (DebugShowTrigger) {
-        printf("resolver detached %d\n", slot->keyIndex);
+        xprintf("resolver detached %d\n", slot->keyIndex);
       }
     }
   }
@@ -1232,7 +1232,7 @@ static void triggerResolver_tick(uint8_t ms) {
     if (slot->isActive &&
         !slot->hold &&
         slot->resolverProc == NULL) {
-      // printf("key %d detached from slot\n", slot->keyIndex);
+      // xprintf("key %d detached from slot\n", slot->keyIndex);
       slot->isActive = false;
     }
   }
@@ -1243,7 +1243,7 @@ static KeySlot *triggerResolver_attachKeyToFreeSlot(uint8_t keyIndex) {
     KeySlot *slot = &resolverState.keySlots[i];
     if (!slot->isActive) {
       keySlot_attachKey(slot, keyIndex);
-      // printf("key %d attached to slot\n", keyIndex);
+      // xprintf("key %d attached to slot\n", keyIndex);
       return slot;
     }
   }
@@ -1262,7 +1262,7 @@ static KeySlot *triggerResolver_getActiveKeySlotByKeyIndex(uint8_t keyIndex) {
 
 static void triggerResolver_handleKeyInput(uint8_t keyIndex, bool isDown) {
   if (isDown) {
-    //printf("corelogic, keydown %d\n", keyIndex);
+    //xprintf("corelogic, keydown %d\n", keyIndex);
     KeySlot *slot = triggerResolver_getActiveKeySlotByKeyIndex(keyIndex);
     if (!slot) {
       slot = triggerResolver_attachKeyToFreeSlot(keyIndex);
@@ -1271,10 +1271,10 @@ static void triggerResolver_handleKeyInput(uint8_t keyIndex, bool isDown) {
       resolverState.interruptKeyIndex = keyIndex;
       slot->nextHold = true;
     } else {
-      printf("cannot attach key %d to slot\n", keyIndex);
+      xprintf("cannot attach key %d to slot\n", keyIndex);
     }
   } else {
-    //printf("corelogic, keyup %d\n", keyIndex);
+    //xprintf("corelogic, keyup %d\n", keyIndex);
     KeySlot *slot = triggerResolver_getActiveKeySlotByKeyIndex(keyIndex);
     if (slot) {
       slot->nextHold = false;

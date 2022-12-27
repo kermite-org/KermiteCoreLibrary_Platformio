@@ -4,6 +4,8 @@
 
 //https://gist.github.com/ridencww/4e5d10097fee0b0f7f6b
 
+#ifdef KERMITE_CORE_DEBUG_LOG
+
 void xprintf(const char *fmt, ...) {
   auto &serial = Serial;
   va_list argv;
@@ -63,3 +65,9 @@ void xprintf(const char *fmt, ...) {
   }
   va_end(argv);
 }
+
+#else
+
+void xxprintf(const char *fmt, ...) {}
+
+#endif

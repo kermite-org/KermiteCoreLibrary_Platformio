@@ -49,7 +49,7 @@ enum {
 
 static void seekChunk(uint16_t chunkSig, uint16_t posStart, uint16_t posEnd, uint16_t *out_addr, uint16_t *out_size) {
   uint16_t pos = posStart;
-  // printf("--seek chunk %x\n", chunkSig);
+  // xprintf("--seek chunk %x\n", chunkSig);
   while (pos < posEnd) {
     uint16_t head = dataMemory_readWord(pos);
     uint16_t size = dataMemory_readWord(pos + 2);
@@ -57,7 +57,7 @@ static void seekChunk(uint16_t chunkSig, uint16_t posStart, uint16_t posEnd, uin
       pos += 4;
       *out_addr = pos;
       *out_size = size;
-      // printf("chunk %x found, pos:%d size:%d\n", chunkSig, pos, size);
+      // xprintf("chunk %x found, pos:%d size:%d\n", chunkSig, pos, size);
       return;
     } else {
       if (size == 0) {
@@ -155,7 +155,7 @@ static bool validateStorageDataFormat() {
 }
 
 static void resetDataStorage() {
-  printf("reset data storage for new project\n");
+  xprintf("reset data storage for new project\n");
   dataMemory_clearAllZero();
   dataMemory_writeWord(0, StorageHeadMagicNumber);
   uint16_t pos = 2;
@@ -183,12 +183,12 @@ static void resetDataStorage() {
 //exports
 
 void dataStorage_initialize() {
-  printf("datastorage initialize\n");
+  xprintf("datastorage initialize\n");
   bool storageValid = validateStorageDataFormat();
   if (!storageValid) {
     resetDataStorage();
   } else {
-    printf("storage data valid\n");
+    xprintf("storage data valid\n");
   }
 }
 

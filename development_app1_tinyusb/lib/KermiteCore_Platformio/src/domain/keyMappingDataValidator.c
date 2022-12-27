@@ -26,7 +26,7 @@ bool keyMappingDataValidator_checkBinaryProfileDataHeader() {
     uint8_t profileBinaryFormatRevision = decode_byte(p + 2);
     uint8_t numKeys = decode_byte(p + 3);
     uint8_t numLayers = decode_byte(p + 4);
-    // printf("%d %d %d %d %d\n", logicModelType, configStorageFormatRevision, profileBinaryFormatRevision, numKeys, numLayers);
+    // xprintf("%d %d %d %d %d\n", logicModelType, configStorageFormatRevision, profileBinaryFormatRevision, numKeys, numLayers);
     storageHeaderValid =
         logicModelType == 0x01 &&
         configStorageFormatRevision == Kermite_ConfigStorageFormatRevision &&
@@ -36,10 +36,10 @@ bool keyMappingDataValidator_checkBinaryProfileDataHeader() {
   }
 
   if (!storageHeaderValid) {
-    printf("invalid key assigns data\n");
+    xprintf("invalid key assigns data\n");
     // utils_debugShowBytes(eepromTempBuf, KeyMappingDataHeaderLength);
   } else {
-    printf("key assigns storage data is valid\n");
+    xprintf("key assigns storage data is valid\n");
   }
 
   return storageHeaderValid;
