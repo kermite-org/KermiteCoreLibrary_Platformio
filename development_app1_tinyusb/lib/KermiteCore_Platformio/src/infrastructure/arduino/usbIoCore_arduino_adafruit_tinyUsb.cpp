@@ -1,5 +1,5 @@
 #ifdef USE_TINYUSB
-#include "usbIoCore.h"
+#include "../usbIoCore.h"
 #include <Arduino.h>
 
 #include <Adafruit_TinyUSB.h>

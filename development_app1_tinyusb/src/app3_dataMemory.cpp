@@ -10,7 +10,6 @@ static Button buttons[] = { Button(7), Button(5) };
 static int cnt = 0;
 
 static void updateButton() {
-
   {
     Button &button = buttons[0];
     button.update();
