@@ -1,8 +1,12 @@
 #include "KermiteCore.h"
+#include "domain/dataMemory.h"
 #include "infrastructure/debugUtils.h"
+#include "infrastructure/flashPersistSector.h"
 #include "infrastructure/usbIoCore.h"
 
 void KermiteCore::begin() {
+  flashPersistSector_initialize();
+  dataMemory_initialize();
   usbIoCore_initialize();
 }
 
@@ -21,4 +25,5 @@ void KermiteCore::processUpdate() {
   if (hasData) {
     debugUtils_printBytes(rawHidTempBuf, 64);
   }
+  dataMemory_processTick();
 }
