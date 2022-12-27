@@ -6,7 +6,7 @@
 #include <string.h>
 
 static const uint32_t persistDataSize = flashPersistSector_DataSize;
-static uint8_t ramData[persistDataSize] = { 0 };
+static uint8_t ramData[persistDataSize];
 static uint32_t saveCount = 0;
 
 static void loadRamDataFromFlash() {
