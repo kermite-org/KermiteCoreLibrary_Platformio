@@ -1,8 +1,8 @@
 #ifdef USE_TINYUSB
 #include "../usbIoCore.h"
+#include <Adafruit_TinyUSB.h>
 #include <Arduino.h>
 
-#include <Adafruit_TinyUSB.h>
 
 enum {
   RID_KEYBOARD = 1,

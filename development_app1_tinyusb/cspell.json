@@ -4,6 +4,13 @@
   "dictionaryDefinitions": [],
   "dictionaries": [],
   "words": [],
-  "ignoreWords": ["kermite", "keycodes", "adafruit", "tinyusb", "keymapping"],
+  "ignoreWords": [
+    "kermite",
+    "keycodes",
+    "adafruit",
+    "tinyusb",
+    "keymapping",
+    "bootloader"
+  ],
   "import": []
 }
