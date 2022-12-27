@@ -11,10 +11,10 @@ void KermiteCore::begin() {
 }
 
 void KermiteCore::issueKeyState(uint8_t keyIndex, bool isDown) {
-  static uint8_t hidKeycodes[6];
+  static uint8_t reportBytes[8];
   uint8_t outputHidKeyCode = 4;
-  hidKeycodes[0] = isDown ? outputHidKeyCode : 0;
-  usbIoCore_hidKeyboard_writeReport(0, hidKeycodes);
+  reportBytes[2] = isDown ? outputHidKeyCode : 0;
+  usbIoCore_hidKeyboard_writeReport(reportBytes);
 }
 
 static uint8_t rawHidTempBuf[64];

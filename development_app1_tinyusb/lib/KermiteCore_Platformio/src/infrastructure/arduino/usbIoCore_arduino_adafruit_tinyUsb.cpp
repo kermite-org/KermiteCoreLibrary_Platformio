@@ -51,11 +51,9 @@ void usbIoCore_initialize() {
   }
 }
 
-void usbIoCore_hidKeyboard_writeReport(
-    uint8_t modifier,
-    uint8_t *hidKeycodes) {
+void usbIoCore_hidKeyboard_writeReport(uint8_t *pReportBytes8) {
   if (usb_hid.ready()) {
-    usb_hid.keyboardReport(RID_KEYBOARD, modifier, hidKeycodes);
+    usb_hid.sendReport(RID_KEYBOARD, pReportBytes8, 8);
   }
 }
 
