@@ -12,8 +12,8 @@ void setup() {
 void loop() {
   static int cnt = 0;
   if (cnt % 10 == 0) {
-    bool keyState = digitalRead(pinKey0);
-    kermite.feedKeyState(0, keyState);
+    bool pressed = digitalRead(pinKey0);
+    kermite.feedKeyState(0, pressed);
   }
   kermite.processUpdate();
   cnt++;
