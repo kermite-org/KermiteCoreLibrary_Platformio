@@ -20,14 +20,22 @@ static const uint8_t descHidReportGeneric[] = {
   TUD_HID_REPORT_DESC_GENERIC_INOUT(64),
 };
 
-static Adafruit_USBD_HID hidShared(descHidReportShared, sizeof(descHidReportShared), HID_ITF_PROTOCOL_NONE, 2, false);
+static Adafruit_USBD_HID hidShared(descHidReportShared, sizeof(descHidReportShared), HID_ITF_PROTOCOL_NONE, 2, true);
 
 static Adafruit_USBD_HID hidGeneric(descHidReportGeneric, sizeof(descHidReportGeneric), HID_ITF_PROTOCOL_NONE, 2, true);
 
 static uint8_t rawHidRxBuf[4][64];
 static uint32_t rawHidRxPageCount = 0;
 
-static void hidGeneric_setReportCallback(uint8_t report_id, hid_report_type_t report_type, uint8_t const *buffer, uint16_t bufsize) {
+static uint8_t keyboardLedStatus = 0;
+
+static void hidShared_setReportCallback(uint8_t reportId, hid_report_type_t reportType, uint8_t const *buffer, uint16_t bufsize) {
+  if (reportId == RID_KEYBOARD && bufsize == 1) {
+    keyboardLedStatus = buffer[0];
+  }
+}
+
+static void hidGeneric_setReportCallback(uint8_t reportId, hid_report_type_t reportType, uint8_t const *buffer, uint16_t bufsize) {
   if (rawHidRxPageCount < 4) {
     memcpy(rawHidRxBuf[rawHidRxPageCount], buffer, bufsize);
     rawHidRxPageCount++;
@@ -38,8 +46,8 @@ void usbIoCore_initialize() {
   USBDevice.setID(0xF055, 0xA579);
   // USBDevice.setID(0xF055, 0xA57A); //for debugging
   USBDevice.setManufacturerDescriptor("Kermite");
-  // USBDevice.setProductDescriptor("KermiteCore_Arduino");
 
+  hidShared.setReportCallback(NULL, hidShared_setReportCallback);
   hidShared.begin();
 
   hidGeneric.setReportCallback(NULL, hidGeneric_setReportCallback);
@@ -69,8 +77,7 @@ void usbIoCore_hidConsumerControl_writeReport(uint8_t *pReportBytes2) {
 }
 
 uint8_t usbIoCore_hidKeyboard_getStatusLedFlags() {
-  //todo: support keyboard status LEDs
-  return 0;
+  return keyboardLedStatus;
 }
 
 bool usbIoCore_rawHid_writeData(uint8_t *pDataBytes64) {
