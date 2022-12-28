@@ -35,8 +35,8 @@ static void hidGeneric_setReportCallback(uint8_t report_id, hid_report_type_t re
 }
 
 void usbIoCore_initialize() {
-  // USBDevice.setID(0xF055, 0xA579);
-  USBDevice.setID(0xF055, 0xA57A); //for debugging
+  USBDevice.setID(0xF055, 0xA579);
+  // USBDevice.setID(0xF055, 0xA57A); //for debugging
   USBDevice.setManufacturerDescriptor("Kermite");
   // USBDevice.setProductDescriptor("KermiteCore_Arduino");
 
