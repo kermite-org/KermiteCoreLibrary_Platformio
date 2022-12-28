@@ -68,6 +68,6 @@ void xprintf(const char *fmt, ...) {
 
 #else
 
-void xxprintf(const char *fmt, ...) {}
+void xprintf(const char *fmt, ...) {}
 
 #endif

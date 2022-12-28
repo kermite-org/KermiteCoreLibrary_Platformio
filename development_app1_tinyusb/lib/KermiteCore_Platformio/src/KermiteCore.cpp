@@ -1,6 +1,6 @@
 #include "KermiteCore.h"
 #include "domain/dataMemory.h"
-#include "domain/keyboardMainInternal.h"
+#include "domain/keyboardMain.h"
 #include "infrastructure/debugUtils.h"
 #include "infrastructure/flashPersistSector.h"
 #include "infrastructure/usbIoCore.h"

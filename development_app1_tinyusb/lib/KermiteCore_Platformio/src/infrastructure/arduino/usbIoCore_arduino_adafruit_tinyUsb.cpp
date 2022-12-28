@@ -56,13 +56,13 @@ void usbIoCore_hidKeyboard_writeReport(uint8_t *pReportBytes8) {
   }
 }
 
-bool usbIoCore_hidMouse_writeReport(uint8_t *pReportBytes7) {
+void usbIoCore_hidMouse_writeReport(uint8_t *pReportBytes7) {
   if (hidShared.ready()) {
     hidShared.sendReport(RID_MOUSE, pReportBytes7, 7);
   }
 }
 
-bool usbIoCore_hidConsumerControl_writeReport(uint8_t *pReportBytes2) {
+void usbIoCore_hidConsumerControl_writeReport(uint8_t *pReportBytes2) {
   if (hidShared.ready()) {
     hidShared.sendReport(RID_MOUSE, pReportBytes2, 2);
   }

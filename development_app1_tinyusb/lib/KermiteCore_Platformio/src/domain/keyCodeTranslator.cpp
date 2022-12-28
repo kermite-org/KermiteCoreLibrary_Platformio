@@ -109,7 +109,7 @@ enum HidKey {
   KU_F24,
 
   KU_Menu = 118,
-  
+
   KU_AudioMute = 127,
   KU_AudioVolumeUp,
   KU_AudioVolumeDown,
@@ -199,7 +199,7 @@ enum HidKeyJA {
 
 typedef struct {
   uint8_t logicalKey; //logical key code
-  char *text;
+  const char *text;
   uint16_t hidKeyPrimary;   //hid keycode with shift (us mapping)
   uint16_t hidKeySecondary; //hid keycode with shift (jis mapping)
 } LogicalKeyItem;
@@ -384,7 +384,7 @@ uint16_t keyCodeTranslator_mapLogicalKeyToHidKeyCode(uint8_t logicalKey, bool is
   return 0;
 }
 
-char *keyCodeTranslator_mapLogicalKeyToKeyText(uint8_t logicalKey) {
+const char *keyCodeTranslator_mapLogicalKeyToKeyText(uint8_t logicalKey) {
   const LogicalKeyItem *item = getLogicalKeyItem(logicalKey);
   if (item) {
     return item->text;

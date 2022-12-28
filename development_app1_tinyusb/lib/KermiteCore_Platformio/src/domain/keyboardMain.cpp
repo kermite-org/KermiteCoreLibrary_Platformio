@@ -13,7 +13,6 @@
 #include "infrastructure/xprintf.h"
 #include "keyMappingDataValidator.h"
 #include "keyboardCoreLogic.h"
-#include "keyboardMainInternal.h"
 #include "versionDefinitions.h"
 #include <stdio.h>
 
@@ -25,23 +24,23 @@
 #endif
 
 #define NumScanSlots KM0_KEYBOARD__NUM_SCAN_SLOTS
-//#define NumScanSlotBytes Ceil(NumScanSlots / 8)
-#define NumScanSlotBytes ((NumScanSlots + 7) / 8)
+// //#define NumScanSlotBytes Ceil(NumScanSlots / 8)
+// #define NumScanSlotBytes ((NumScanSlots + 7) / 8)
 
-#ifndef KM0_KEYBOARD__NUM_MAX_KEY_SCANNERS
-#define KM0_KEYBOARD__NUM_MAX_KEY_SCANNERS 4
-#endif
-#define NumMaxKeyScanners KM0_KEYBOARD__NUM_MAX_KEY_SCANNERS
+// #ifndef KM0_KEYBOARD__NUM_MAX_KEY_SCANNERS
+// #define KM0_KEYBOARD__NUM_MAX_KEY_SCANNERS 4
+// #endif
+// #define NumMaxKeyScanners KM0_KEYBOARD__NUM_MAX_KEY_SCANNERS
 
-#ifndef KM0_KEYBOARD__NUM_MAX_RGB_LIGHTING_MODULES
-#define KM0_KEYBOARD__NUM_MAX_RGB_LIGHTING_MODULES 1
-#endif
-#define NumsMaxRgbLightingModules KM0_KEYBOARD__NUM_MAX_RGB_LIGHTING_MODULES
+// #ifndef KM0_KEYBOARD__NUM_MAX_RGB_LIGHTING_MODULES
+// #define KM0_KEYBOARD__NUM_MAX_RGB_LIGHTING_MODULES 1
+// #endif
+// #define NumsMaxRgbLightingModules KM0_KEYBOARD__NUM_MAX_RGB_LIGHTING_MODULES
 
 //----------------------------------------------------------------------
 //variables
 
-static uint8_t *scanIndexToKeyIndexMap = NULL;
+// static uint8_t *scanIndexToKeyIndexMap = NULL;
 
 //key states
 /*
@@ -49,51 +48,48 @@ scanSlotFlags, nextScanSlotFlags
 Hold the key state on the left hand side in the first half and on the right hand side in the second half.
 */
 
-static uint8_t scanSlotFlags[NumScanSlotBytes] = { 0 };
-static uint8_t inputScanSlotFlags[NumScanSlotBytes] = { 0 };
+// static uint8_t scanSlotFlags[NumScanSlotBytes];
+// static uint8_t inputScanSlotFlags[NumScanSlotBytes];
 
 static uint16_t localLayerFlags = 0;
-static uint8_t localHidReport[8] = { 0 };
-
-static uint8_t localHidMouseReport[7] = { 0 };
+static uint8_t localHidReport[8];
+static uint8_t blankHidReport[8];
+static uint8_t localHidMouseReport[7];
 
 static bool isSimulatorModeEnabled = false;
 static bool isMuteModeEnabled = false;
 
 static KeyboardCallbackSet *callbacks = NULL;
 
-typedef void (*KeyScannerUpdateFunc)(uint8_t *keyStateBitFlags);
-static KeyScannerUpdateFunc keyScannerUpdateFuncs[NumMaxKeyScanners] = { 0 };
-static uint8_t keyScannersLength = 0;
+// typedef void (*KeyScannerUpdateFunc)(uint8_t *keyStateBitFlags);
+// static KeyScannerUpdateFunc keyScannerUpdateFuncs[NumMaxKeyScanners];
+// static uint8_t keyScannersLength = 0;
 
-typedef void (*PointingDeviceUpdateFunc)(int8_t *outDeltaX, int8_t *outDeltaY);
-PointingDeviceUpdateFunc pointingDeviceUpdateFunc = NULL;
+// typedef void (*PointingDeviceUpdateFunc)(int8_t *outDeltaX, int8_t *outDeltaY);
+// PointingDeviceUpdateFunc pointingDeviceUpdateFunc = NULL;
 
-typedef void (*VisualModuleUpdateFunc)(void);
-static VisualModuleUpdateFunc rgbLightingUpdateFuncs[NumsMaxRgbLightingModules] = { 0 };
-static uint8_t rgbLightingModulesLength = 0;
+// typedef void (*VisualModuleUpdateFunc)(void);
+// static VisualModuleUpdateFunc rgbLightingUpdateFuncs[NumsMaxRgbLightingModules];
+// static uint8_t rgbLightingModulesLength = 0;
 
-static VisualModuleUpdateFunc oledDisplayUpdateFunc = NULL;
-static VisualModuleUpdateFunc hostKeyboardStatusOutputFunc = NULL;
+// static VisualModuleUpdateFunc oledDisplayUpdateFunc = NULL;
+// static VisualModuleUpdateFunc hostKeyboardStatusOutputFunc = NULL;
 
 static bool optionEmitRealtimeEvents = true;
-static bool optionAffectKeyHoldStateToLed = true;
-static bool optionUseHeartbeatLed = true;
+// static bool optionAffectKeyHoldStateToLed = true;
+// static bool optionUseHeartbeatLed = true;
 
 KeyboardMainExposedState keyboardMain_exposedState = {
   .layerStateFlags = 0,
   .hidReportBuf = localHidReport,
   .pressedKeyIndex = KEYINDEX_NONE,
-  .isSplitSlave = false,
-  .optionInvertSide = false,
+  // .isSplitSlave = false,
+  // .optionInvertSide = false,
   .hostKeyboardStateFlags = 0
 };
 
 typedef void (*KeySlotStateChangedCallback)(uint8_t slotIndex, bool isDown);
-
 KeySlotStateChangedCallback keySlotStateChangedCallback = NULL;
-
-static uint8_t blankHidReport[8] = { 0 };
 
 static bool keyStateBuf[KM0_KEYBOARD__NUM_SCAN_SLOTS];
 
@@ -114,28 +110,34 @@ static char *writeTextBytes(char *buf, char *text, int len) {
   return buf + len;
 }
 
-static char tempProductNameBuf[32];
-
-static char tempSerialNumberBuf[39];
-
 //usb serial number
 //format: <Prefix(8)>:<McuCode(3)>:<FirmwareId(6)>:<ProjectId(6)>:<VariationId(2)>:<DeviceInstanceCode(4)>
 //example: A152FD2C:M01:7qHDCp:K3e89X:01:d46d
 //length: 38bytes (39bytes with null terminator)
 static void setupUsbDeviceAttributes() {
-  char *buf = tempSerialNumberBuf;
-  buf = writeTextBytes(buf, Kermite_CommonSerialNumberPrefix, 8);
-  buf = writeTextBytes(buf, ":", 1);
-  buf = writeTextBytes(buf, Kermite_Project_McuCode, 3);
-  buf = writeTextBytes(buf, ":", 1);
-  buf = writeTextBytes(buf, KERMITE_FIRMWARE_ID, 6);
-  buf = writeTextBytes(buf, ":", 1);
-  buf = writeTextBytes(buf, commonFirmwareMetadata.projectId, 6);
-  buf = writeTextBytes(buf, ":", 1);
-  buf = writeTextBytes(buf, commonFirmwareMetadata.variationId, 2);
-  buf = writeTextBytes(buf, ":", 1);
-  buf = writeTextBytes(buf, commonFirmwareMetadata.deviceInstanceCode, 4);
-  buf = writeTextBytes(buf, "\0", 1);
+  static char tempProductNameBuf[32];
+  static char tempSerialNumberBuf[39];
+
+  // char *buf = tempSerialNumberBuf;
+  // buf = writeTextBytes(buf, Kermite_CommonSerialNumberPrefix, 8);
+  // buf = writeTextBytes(buf, ":", 1);
+  // buf = writeTextBytes(buf, Kermite_Project_McuCode, 3);
+  // buf = writeTextBytes(buf, ":", 1);
+  // buf = writeTextBytes(buf, KERMITE_FIRMWARE_ID, 6);
+  // buf = writeTextBytes(buf, ":", 1);
+  // buf = writeTextBytes(buf, commonFirmwareMetadata.projectId, 6);
+  // buf = writeTextBytes(buf, ":", 1);
+  // buf = writeTextBytes(buf, commonFirmwareMetadata.variationId, 2);
+  // buf = writeTextBytes(buf, ":", 1);
+  // buf = writeTextBytes(buf, commonFirmwareMetadata.deviceInstanceCode, 4);
+  // buf = writeTextBytes(buf, "\0", 1);
+  snprintf(tempSerialNumberBuf, 39, "%.8s:%.3s:%.6s:%.6s:%.2s:%.4s",
+           Kermite_CommonSerialNumberPrefix,
+           Kermite_Project_McuCode,
+           KERMITE_FIRMWARE_ID,
+           commonFirmwareMetadata.projectId,
+           commonFirmwareMetadata.variationId,
+           commonFirmwareMetadata.deviceInstanceCode);
   usbIoCore_setSerialNumber(tempSerialNumberBuf);
 
   // usbIoCore_setProductName(commonFirmwareMetadata.keyboardName);
@@ -152,50 +154,50 @@ static void resetKeyboardCoreLogic() {
   }
 }
 
-static void updateKeyScanners() {
-  for (uint8_t i = 0; i < keyScannersLength; i++) {
-    KeyScannerUpdateFunc updateFunc = keyScannerUpdateFuncs[i];
-    if (updateFunc) {
-      updateFunc(inputScanSlotFlags);
-    }
-  }
-}
+// static void updateKeyScanners() {
+//   for (uint8_t i = 0; i < keyScannersLength; i++) {
+//     KeyScannerUpdateFunc updateFunc = keyScannerUpdateFuncs[i];
+//     if (updateFunc) {
+//       updateFunc(inputScanSlotFlags);
+//     }
+//   }
+// }
 
-static void updateRgbLightingModules(uint32_t tick) {
-  for (uint8_t i = 0; i < rgbLightingModulesLength; i++) {
-    rgbLightingUpdateFuncs[i]();
-  }
-}
+// static void updateRgbLightingModules(uint32_t tick) {
+//   for (uint8_t i = 0; i < rgbLightingModulesLength; i++) {
+//     rgbLightingUpdateFuncs[i]();
+//   }
+// }
 
-static void updateOledDisplayModule(uint32_t tick) {
-  if (oledDisplayUpdateFunc) {
-    oledDisplayUpdateFunc();
-  }
-}
+// static void updateOledDisplayModule(uint32_t tick) {
+//   if (oledDisplayUpdateFunc) {
+//     oledDisplayUpdateFunc();
+//   }
+// }
 
-static void updateHostKeyboardStatusOutputModule() {
-  if (hostKeyboardStatusOutputFunc) {
-    hostKeyboardStatusOutputFunc();
-  }
-}
+// static void updateHostKeyboardStatusOutputModule() {
+//   if (hostKeyboardStatusOutputFunc) {
+//     hostKeyboardStatusOutputFunc();
+//   }
+// }
 
-static bool checkIfSomeKeyPressed() {
-  for (uint8_t i = 0; i < NumScanSlotBytes; i++) {
-    if (scanSlotFlags[i] > 0) {
-      return true;
-    }
-  }
-  return false;
-}
+// static bool checkIfSomeKeyPressed() {
+//   for (uint8_t i = 0; i < NumScanSlotBytes; i++) {
+//     if (scanSlotFlags[i] > 0) {
+//       return true;
+//     }
+//   }
+//   return false;
+// }
 
-static bool checkIfSomeInputSlotKeyPressed() {
-  for (uint8_t i = 0; i < NumScanSlotBytes; i++) {
-    if (inputScanSlotFlags[i] > 0) {
-      return true;
-    }
-  }
-  return false;
-}
+// static bool checkIfSomeInputSlotKeyPressed() {
+//   for (uint8_t i = 0; i < NumScanSlotBytes; i++) {
+//     if (inputScanSlotFlags[i] > 0) {
+//       return true;
+//     }
+//   }
+//   return false;
+// }
 
 //----------------------------------------------------------------------
 //callbacks
@@ -213,13 +215,13 @@ static void parameterValueHandler(uint8_t eventType, uint8_t slotIndex, uint8_t 
 
   if (slotIndex == SystemParameter_EmitRealtimeEvents) {
     optionEmitRealtimeEvents = !!value;
-  } else if (slotIndex == SystemParameter_KeyHoldIndicatorLed) {
-    optionAffectKeyHoldStateToLed = !!value;
-  } else if (slotIndex == SystemParameter_HeartbeatLed) {
-    optionUseHeartbeatLed = !!value;
-  } else if (slotIndex == SystemParameter_MasterSide) {
+  } else if (slotIndex == SystemParameter_KeyHoldIndicatorLed__Deprecated) {
+    // optionAffectKeyHoldStateToLed = !!value;
+  } else if (slotIndex == SystemParameter_HeartbeatLed__Deprecated) {
+    // optionUseHeartbeatLed = !!value;
+  } else if (slotIndex == SystemParameter_MasterSide__Deprecated) {
     //value: (0:left, 1:right)
-    keyboardMain_exposedState.optionInvertSide = value == 1;
+    // keyboardMain_exposedState.optionInvertSide = value == 1;
   } else if (slotIndex == SystemParameter_SystemLayout) {
     keyboardCoreLogic_setSystemLayout(value);
     xprintf("system layout: %s\n", value == 1 ? "JIS" : "US");
@@ -313,12 +315,12 @@ static void onPhysicalKeyStateChanged(uint8_t scanIndex, bool isDown) {
     keySlotStateChangedCallback(scanIndex, isDown);
   }
   uint8_t keyIndex = scanIndex;
-  if (scanIndexToKeyIndexMap) {
-    keyIndex = scanIndexToKeyIndexMap[scanIndex];
-    if (keyIndex == KEYINDEX_NONE) {
-      return;
-    }
-  }
+  // if (scanIndexToKeyIndexMap) {
+  //   keyIndex = scanIndexToKeyIndexMap[scanIndex];
+  //   if (keyIndex == KEYINDEX_NONE) {
+  //     return;
+  //   }
+  // }
 
   if (isDown) {
     xprintf("keydown %d\n", keyIndex);
@@ -341,69 +343,80 @@ static void onPhysicalKeyStateChanged(uint8_t scanIndex, bool isDown) {
   }
 }
 
-//----------------------------------------------------------------------
+static void processCoreLogicUpdate() {
+  static uint32_t prevTickMs = 0;
+  uint32_t tickMs = system_getSystemTimeMs();
+  uint32_t elapsed = utils_clamp(tickMs - prevTickMs, 0, 100);
 
-static void processKeyStatesUpdate() {
-  for (uint8_t i = 0; i < NumScanSlots; i++) {
-    uint8_t curr = utils_readArrayedBitFlagsBit(scanSlotFlags, i);
-    uint8_t next = utils_readArrayedBitFlagsBit(inputScanSlotFlags, i);
-    if (!curr && next) {
-      onPhysicalKeyStateChanged(i, true);
-    }
-    if (curr && !next) {
-      onPhysicalKeyStateChanged(i, false);
-    }
-    utils_writeArrayedBitFlagsBit(scanSlotFlags, i, next);
-  }
+  keyboardCoreLogic_processTicker(elapsed);
+  processKeyboardCoreLogicOutput();
+
+  prevTickMs = tickMs;
 }
 
 //----------------------------------------------------------------------
 
-void keyboardMain_useKeyScanner(void (*_keyScannerUpdateFunc)(uint8_t *keyStateBitFlags)) {
-  if (utils_checkPointerArrayIncludes((void **)keyScannerUpdateFuncs, keyScannersLength, _keyScannerUpdateFunc)) {
-    return;
-  }
-  keyScannerUpdateFuncs[keyScannersLength++] = _keyScannerUpdateFunc;
-}
+// static void processKeyStatesUpdate() {
+//   for (uint8_t i = 0; i < NumScanSlots; i++) {
+//     uint8_t curr = utils_readArrayedBitFlagsBit(scanSlotFlags, i);
+//     uint8_t next = utils_readArrayedBitFlagsBit(inputScanSlotFlags, i);
+//     if (!curr && next) {
+//       onPhysicalKeyStateChanged(i, true);
+//     }
+//     if (curr && !next) {
+//       onPhysicalKeyStateChanged(i, false);
+//     }
+//     utils_writeArrayedBitFlagsBit(scanSlotFlags, i, next);
+//   }
+// }
 
-void keyboardMain_useRgbLightingModule(void (*_updateFn)(void)) {
-  if (utils_checkPointerArrayIncludes((void **)rgbLightingUpdateFuncs, rgbLightingModulesLength, _updateFn)) {
-    return;
-  }
-  rgbLightingUpdateFuncs[rgbLightingModulesLength++] = _updateFn;
-}
+//----------------------------------------------------------------------
 
-void keyboardMain_usePointingDevice(void (*_pointingDeviceUpdateFunc)(int8_t *outDeltaX, int8_t *outDeltaY)) {
-  pointingDeviceUpdateFunc = _pointingDeviceUpdateFunc;
-}
+// void keyboardMain_useKeyScanner(void (*_keyScannerUpdateFunc)(uint8_t *keyStateBitFlags)) {
+//   if (utils_checkPointerArrayIncludes((void **)keyScannerUpdateFuncs, keyScannersLength, _keyScannerUpdateFunc)) {
+//     return;
+//   }
+//   keyScannerUpdateFuncs[keyScannersLength++] = _keyScannerUpdateFunc;
+// }
 
-void keyboardMain_useOledDisplayModule(void (*_updateFn)(void)) {
-  oledDisplayUpdateFunc = _updateFn;
-}
+// void keyboardMain_useRgbLightingModule(void (*_updateFn)(void)) {
+//   if (utils_checkPointerArrayIncludes((void **)rgbLightingUpdateFuncs, rgbLightingModulesLength, _updateFn)) {
+//     return;
+//   }
+//   rgbLightingUpdateFuncs[rgbLightingModulesLength++] = _updateFn;
+// }
 
-void keyboardMain_useHostKeyboardStatusOutputModule(void (*_updateFn)(void)) {
-  hostKeyboardStatusOutputFunc = _updateFn;
-}
+// void keyboardMain_usePointingDevice(void (*_pointingDeviceUpdateFunc)(int8_t *outDeltaX, int8_t *outDeltaY)) {
+//   pointingDeviceUpdateFunc = _pointingDeviceUpdateFunc;
+// }
 
-void keyboardMain_setKeyIndexTable(const int8_t *_scanIndexToKeyIndexMap) {
-  scanIndexToKeyIndexMap = (uint8_t *)_scanIndexToKeyIndexMap;
-}
+// void keyboardMain_useOledDisplayModule(void (*_updateFn)(void)) {
+//   oledDisplayUpdateFunc = _updateFn;
+// }
+
+// void keyboardMain_useHostKeyboardStatusOutputModule(void (*_updateFn)(void)) {
+//   hostKeyboardStatusOutputFunc = _updateFn;
+// }
+
+// void keyboardMain_setKeyIndexTable(const int8_t *_scanIndexToKeyIndexMap) {
+//   scanIndexToKeyIndexMap = (uint8_t *)_scanIndexToKeyIndexMap;
+// }
 
 void keyboardMain_setCallbacks(KeyboardCallbackSet *_callbacks) {
   callbacks = _callbacks;
 }
 
-void keyboardMain_setAsSplitSlave() {
-  keyboardMain_exposedState.isSplitSlave = true;
-}
+// void keyboardMain_setAsSplitSlave() {
+//   keyboardMain_exposedState.isSplitSlave = true;
+// }
 
-uint8_t *keyboardMain_getScanSlotFlags() {
-  return scanSlotFlags;
-}
+// uint8_t *keyboardMain_getScanSlotFlags() {
+//   return scanSlotFlags;
+// }
 
-uint8_t *keyboardMain_getInputScanSlotFlags() {
-  return inputScanSlotFlags;
-}
+// uint8_t *keyboardMain_getInputScanSlotFlags() {
+//   return inputScanSlotFlags;
+// }
 
 void keyboardMain_initialize() {
   configManager_setParameterExposeFlag(SystemParameter_EmitRealtimeEvents);
@@ -422,80 +435,56 @@ void keyboardMain_initialize() {
   usbIoCore_initialize();
 }
 
-void keyboardMain_updateKeyScanners() {
-  updateKeyScanners();
-}
+// void keyboardMain_updateKeyScanners() {
+//   updateKeyScanners();
+// }
 
-void keyboardMain_updatePointingDevice() {
-  int8_t deltaX = 0, deltaY = 0;
-  if (pointingDeviceUpdateFunc) {
-    pointingDeviceUpdateFunc(&deltaX, &deltaY);
-    if (deltaX != 0 || deltaY != 0) {
-      localHidMouseReport[0] = 0;
-      localHidMouseReport[1] = deltaX;
-      localHidMouseReport[2] = deltaY;
-      usbIoCore_hidMouse_writeReport(localHidMouseReport);
-    }
-  }
-}
+// void keyboardMain_updatePointingDevice() {
+//   int8_t deltaX = 0, deltaY = 0;
+//   if (pointingDeviceUpdateFunc) {
+//     pointingDeviceUpdateFunc(&deltaX, &deltaY);
+//     if (deltaX != 0 || deltaY != 0) {
+//       localHidMouseReport[0] = 0;
+//       localHidMouseReport[1] = deltaX;
+//       localHidMouseReport[2] = deltaY;
+//       usbIoCore_hidMouse_writeReport(localHidMouseReport);
+//     }
+//   }
+// }
 
-void keyboardMain_processKeyInputUpdate() {
-  static uint32_t prevTickMs = 0;
-  uint32_t tickMs = system_getSystemTimeMs();
-  uint32_t elapsed = utils_clamp(tickMs - prevTickMs, 0, 100);
+// void keyboardMain_updateKeyIndicatorLed() {
+//   if (optionAffectKeyHoldStateToLed) {
+//     bool isKeyPressed = checkIfSomeKeyPressed();
+//     boardIo_writeLed2(isKeyPressed);
+//   }
+// }
 
-  processKeyStatesUpdate();
-  keyboardCoreLogic_processTicker(elapsed);
-  processKeyboardCoreLogicOutput();
+// void keyboardMain_updateInputSlotIndicatorLed() {
+//   if (optionAffectKeyHoldStateToLed) {
+//     bool isKeyPressed = checkIfSomeInputSlotKeyPressed();
+//     boardIo_writeLed2(isKeyPressed);
+//   }
+// }
 
-  prevTickMs = tickMs;
-}
+// void keyboardMain_taskFlashHeartbeatLed() {
+//   if (optionUseHeartbeatLed) {
+//     boardIo_writeLed1(true);
+//     system_delayMs(2);
+//     boardIo_writeLed1(false);
+//   }
+// }
 
-void keyboardMain_updateKeyIndicatorLed() {
-  if (optionAffectKeyHoldStateToLed) {
-    bool isKeyPressed = checkIfSomeKeyPressed();
-    boardIo_writeLed2(isKeyPressed);
-  }
-}
+// void keyboardMain_updateRgbLightingModules(uint32_t tick) {
+//   updateRgbLightingModules(tick);
+// }
 
-void keyboardMain_updateInputSlotIndicatorLed() {
-  if (optionAffectKeyHoldStateToLed) {
-    bool isKeyPressed = checkIfSomeInputSlotKeyPressed();
-    boardIo_writeLed2(isKeyPressed);
-  }
-}
+// void keyboardMain_updateOledDisplayModule(uint32_t tick) {
+//   updateOledDisplayModule(tick);
+// }
 
-void keyboardMain_taskFlashHeartbeatLed() {
-  if (optionUseHeartbeatLed) {
-    boardIo_writeLed1(true);
-    system_delayMs(2);
-    boardIo_writeLed1(false);
-  }
-}
-
-void keyboardMain_updateRgbLightingModules(uint32_t tick) {
-  updateRgbLightingModules(tick);
-}
-
-void keyboardMain_updateOledDisplayModule(uint32_t tick) {
-  updateOledDisplayModule(tick);
-}
-
-void keyboardMain_updateHostKeyboardStatusOutputModule() {
-  updateHostKeyboardStatusOutputModule();
-}
-
-void keyboardMain_processUpdate() {
-  // usbIoCore_processUpdate();
-  keyboardMain_exposedState.hostKeyboardStateFlags = usbIoCore_hidKeyboard_getStatusLedFlags();
-  configuratorServant_processUpdate();
-  configManager_processUpdate();
-  dataMemory_processTick();
-}
-
-void keyboardMain_setKeySlotStateChangedCallback(void (*callback)(uint8_t slotIndex, bool isDown)) {
-  keySlotStateChangedCallback = callback;
-}
+// void keyboardMain_updateHostKeyboardStatusOutputModule() {
+//   updateHostKeyboardStatusOutputModule();
+// }
 
 void keyboardMain_feedKeyState(int keyIndex, bool pressed) {
   bool current = keyStateBuf[keyIndex];
@@ -504,4 +493,17 @@ void keyboardMain_feedKeyState(int keyIndex, bool pressed) {
     onPhysicalKeyStateChanged(keyIndex, next);
   }
   keyStateBuf[keyIndex] = next;
+}
+
+void keyboardMain_processUpdate() {
+  // usbIoCore_processUpdate();
+  processCoreLogicUpdate();
+  keyboardMain_exposedState.hostKeyboardStateFlags = usbIoCore_hidKeyboard_getStatusLedFlags();
+  configuratorServant_processUpdate();
+  configManager_processUpdate();
+  dataMemory_processTick();
+}
+
+void keyboardMain_setKeySlotStateChangedCallback(void (*callback)(uint8_t slotIndex, bool isDown)) {
+  keySlotStateChangedCallback = callback;
 }

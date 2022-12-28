@@ -22,7 +22,7 @@ typedef void (*ParameterChangedListener)(uint8_t eventType, uint8_t parameterInd
 static uint8_t systemParameterValues[NumSystemParameters];
 static uint16_t addrSystemParameters = 0;
 static int lazySaveTick = -1;
-static ParameterChangedListener parameterChangedListeners[4] = { 0 };
+static ParameterChangedListener parameterChangedListeners[4];
 static int numParameterChangedListeners = 0;
 
 static uint16_t parameterChangedFlags = 0;
@@ -82,7 +82,7 @@ static void reserveParameterChangedNotification(uint8_t parameterIndex) {
   bit_on(parameterChangedFlags, parameterIndex);
 }
 
-static void reseverAllParameterChangedNotification() {
+static void reserveAllParameterChangedNotification() {
   allParameterChangedFlag = true;
 }
 
@@ -113,13 +113,8 @@ uint16_t configManager_getParameterExposeFlags() {
   return parameterExposeFlags;
 }
 
-void configManager_setParameterExposeFlagsForBoardLeds() {
-  configManager_setParameterExposeFlag(SystemParameter_HeartbeatLed);
-  configManager_setParameterExposeFlag(SystemParameter_KeyHoldIndicatorLed);
-}
-
 void configManager_addParameterChangeListener(ParameterChangedListener listener) {
-  if (utils_checkPointerArrayIncludes((void **)parameterChangedListeners, numParameterChangedListeners, listener)) {
+  if (utils_checkPointerArrayIncludes((void **)parameterChangedListeners, numParameterChangedListeners, (void *)listener)) {
     return;
   }
   parameterChangedListeners[numParameterChangedListeners++] = listener;
@@ -177,7 +172,7 @@ void configManager_initialize() {
     }
     dataMemory_readBytes(addrSystemParameters, systemParameterValues, NumSystemParameters);
     fixSystemParametersLoaded();
-    reseverAllParameterChangedNotification();
+    reserveAllParameterChangedNotification();
   }
 }
 
@@ -202,7 +197,7 @@ void configManager_bulkWriteParameters(uint8_t *buf, uint8_t len, uint8_t parame
     uint8_t value = buf[i];
     writeParameterWuthoutNotification(i, value);
   }
-  reseverAllParameterChangedNotification();
+  reserveAllParameterChangedNotification();
 }
 
 void configManager_resetSystemParameters() {
@@ -211,7 +206,7 @@ void configManager_resetSystemParameters() {
     uint8_t value = pDefaultValues[i];
     writeParameterWuthoutNotification(i, value);
   }
-  reseverAllParameterChangedNotification();
+  reserveAllParameterChangedNotification();
 }
 
 static void shiftParameter(uint8_t parameterIndex, int dir, bool roll) {
@@ -232,23 +227,23 @@ static void shiftParameter(uint8_t parameterIndex, int dir, bool roll) {
 void configManager_handleSystemAction(uint8_t code, uint8_t payloadValue) {
   // xprintf("handle system action %d %d\n", code, payloadValue);
   if (code == SystemAction_GlowToggle) {
-    uint8_t isOn = systemParameterValues[SystemParameter_GlowActive];
-    writeParameter(SystemParameter_GlowActive, isOn ^ 1);
+    uint8_t isOn = systemParameterValues[SystemParameter_GlowActive__Deprecated];
+    writeParameter(SystemParameter_GlowActive__Deprecated, isOn ^ 1);
   }
   if (code == SystemAction_GlowPatternRoll) {
-    shiftParameter(SystemParameter_GlowPattern, 1, true);
+    shiftParameter(SystemParameter_GlowPattern__Deprecated, 1, true);
   }
   if (code == SystemAction_GlowColorPrev) {
-    shiftParameter(SystemParameter_GlowColor, -1, true);
+    shiftParameter(SystemParameter_GlowColor__Deprecated, -1, true);
   }
   if (code == SystemAction_GlowColorNext) {
-    shiftParameter(SystemParameter_GlowColor, 1, true);
+    shiftParameter(SystemParameter_GlowColor__Deprecated, 1, true);
   }
   if (code == SystemAction_GlowBrightnessMinus) {
-    shiftParameter(SystemParameter_GlowBrightness, -16, false);
+    shiftParameter(SystemParameter_GlowBrightness__Deprecated, -16, false);
   }
   if (code == SystemAction_GlowBrightnessPlus) {
-    shiftParameter(SystemParameter_GlowBrightness, 16, false);
+    shiftParameter(SystemParameter_GlowBrightness__Deprecated, 16, false);
   }
   if (code == SystemAction_ResetToDfuMode) {
     reqRestToDfu = true;

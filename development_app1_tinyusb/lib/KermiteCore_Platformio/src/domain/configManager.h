@@ -10,8 +10,6 @@ enum {
 void configManager_setParameterExposeFlag(uint8_t parameterIndex);
 uint16_t configManager_getParameterExposeFlags();
 
-void configManager_setParameterExposeFlagsForBoardLeds();
-
 void configManager_addParameterChangeListener(
     void (*listener)(uint8_t eventType, uint8_t parameterIndex, uint8_t value));
 void configManager_overrideParameterMaxValue(uint8_t parameterIndex, uint8_t value);

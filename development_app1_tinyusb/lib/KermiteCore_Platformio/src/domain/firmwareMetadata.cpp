@@ -11,9 +11,9 @@
 #endif
 
 CommonFirmwareMetadata commonFirmwareMetadata = {
-  .dataHeader = { '$', 'K', 'M', 'M', 'D' },
-  .projectId = "000000",
-  .variationId = "00",
-  .deviceInstanceCode = "0000",
-  .keyboardName = KERMITE_KEYBOARD_NAME,
+  { '$', 'K', 'M', 'M', 'D' }, //dataHeader
+  "000000",                    //projectId
+  "00",                        //variationId
+  "0000",                      //deviceInstanceCode
+  KERMITE_KEYBOARD_NAME,       //keyboardName
 };
