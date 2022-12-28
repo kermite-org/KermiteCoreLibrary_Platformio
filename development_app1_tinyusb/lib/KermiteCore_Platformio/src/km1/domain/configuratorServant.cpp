@@ -210,7 +210,7 @@ static void processReadGenericHidData() {
   }
 
   if (cmd == RawHidOpcode_ParametersWriteAllOperation) {
-    // xprintf("handle custom parameters bluk write\n");
+    // xprintf("handle custom parameters bulk write\n");
     uint8_t parameterIndexBase = p[1];
     uint8_t count = p[2];
     uint8_t *ptr = p + 3;
@@ -218,7 +218,7 @@ static void processReadGenericHidData() {
   }
 
   if (cmd == RawHidOpcode_ParameterSingleWriteOperation) {
-    // xprintf("handle custom parameters signle write\n");
+    // xprintf("handle custom parameters single write\n");
     uint8_t parameterIndex = p[1];
     uint8_t value = p[2];
     // skipNotify = true;
@@ -273,6 +273,6 @@ void configuratorServant_emitRealtimeKeyEvent(uint8_t keyIndex, bool isDown) {
   emitRealtimePhysicalKeyStateEvent(keyIndex, isDown);
 }
 
-void configuratorServant_emitRelatimeLayerEvent(uint16_t layerFlags) {
+void configuratorServant_emitRealtimeLayerEvent(uint16_t layerFlags) {
   emitRealtimeLayerStateEvent(layerFlags);
 }

@@ -15,7 +15,8 @@
     "corelogic",
     "rehold",
     "keyindex",
-    "extr"
+    "extr",
+    "rawhid"
   ],
   "import": []
 }
