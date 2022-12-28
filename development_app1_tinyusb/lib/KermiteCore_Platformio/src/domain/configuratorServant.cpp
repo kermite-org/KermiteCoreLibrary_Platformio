@@ -72,7 +72,7 @@ static void emitGenericHidData(uint8_t *p) {
   if (!usbIoCore_isConnectedToHost()) {
     return;
   }
-  bool done = usbIoCore_genericHid_writeData(p);
+  bool done = usbIoCore_rawHid_writeData(p);
   if (!done) {
     xprintf("[warn] failed to write rawhid data\n");
   }
@@ -146,7 +146,7 @@ static void emitCustomParametersReadResponse() {
 }
 
 static void processReadGenericHidData() {
-  bool hasData = usbIoCore_genericHid_readDataIfExists(rawHidTempBuf);
+  bool hasData = usbIoCore_rawHid_readDataIfExists(rawHidTempBuf);
   if (!hasData) {
     return;
   }

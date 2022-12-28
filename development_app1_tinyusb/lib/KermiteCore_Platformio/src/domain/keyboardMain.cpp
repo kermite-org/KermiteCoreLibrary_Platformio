@@ -1,17 +1,19 @@
 #include "keyboardMain.h"
+#include "base/bitOperations.h"
+#include "base/utils.h"
 #include "commandDefinitions.h"
 #include "configManager.h"
 #include "configuratorServant.h"
+#include "dataMemory.h"
 #include "dataStorage.h"
 #include "firmwareMetadata.h"
+#include "infrastructure/flashPersistSector.h"
+#include "infrastructure/system.h"
+#include "infrastructure/usbIoCore.h"
+#include "infrastructure/xprintf.h"
 #include "keyMappingDataValidator.h"
 #include "keyboardCoreLogic.h"
 #include "keyboardMainInternal.h"
-#include "base/bitOperations.h"
-#include "base/utils.h"
-#include "dataMemory.h"
-#include "infrastructure/system.h"
-#include "infrastructure/usbIoCore.h"
 #include "versionDefinitions.h"
 #include <stdio.h>
 
@@ -114,12 +116,14 @@ static char *writeTextBytes(char *buf, char *text, int len) {
 
 static char tempProductNameBuf[32];
 
+static char tempSerialNumberBuf[39];
+
 //usb serial number
 //format: <Prefix(8)>:<McuCode(3)>:<FirmwareId(6)>:<ProjectId(6)>:<VariationId(2)>:<DeviceInstanceCode(4)>
 //example: A152FD2C:M01:7qHDCp:K3e89X:01:d46d
 //length: 38bytes (39bytes with null terminator)
 static void setupUsbDeviceAttributes() {
-  char *buf = usbIoCore_getSerialNumberTextBufferPointer();
+  char *buf = tempSerialNumberBuf;
   buf = writeTextBytes(buf, Kermite_CommonSerialNumberPrefix, 8);
   buf = writeTextBytes(buf, ":", 1);
   buf = writeTextBytes(buf, Kermite_Project_McuCode, 3);
@@ -132,9 +136,10 @@ static void setupUsbDeviceAttributes() {
   buf = writeTextBytes(buf, ":", 1);
   buf = writeTextBytes(buf, commonFirmwareMetadata.deviceInstanceCode, 4);
   buf = writeTextBytes(buf, "\0", 1);
+  usbIoCore_setSerialNumber(tempSerialNumberBuf);
 
   // usbIoCore_setProductName(commonFirmwareMetadata.keyboardName);
-  snxprintf(tempProductNameBuf, 32, "%s #%s", commonFirmwareMetadata.keyboardName, commonFirmwareMetadata.deviceInstanceCode);
+  snprintf(tempProductNameBuf, 32, "%s #%s", commonFirmwareMetadata.keyboardName, commonFirmwareMetadata.deviceInstanceCode);
   usbIoCore_setProductName(tempProductNameBuf);
 }
 
@@ -417,7 +422,7 @@ void keyboardMain_initialize() {
   usbIoCore_initialize();
 }
 
-void keyboardMain_udpateKeyScanners() {
+void keyboardMain_updateKeyScanners() {
   updateKeyScanners();
 }
 
@@ -446,14 +451,14 @@ void keyboardMain_processKeyInputUpdate() {
   prevTickMs = tickMs;
 }
 
-void keyboardMain_updateKeyInidicatorLed() {
+void keyboardMain_updateKeyIndicatorLed() {
   if (optionAffectKeyHoldStateToLed) {
     bool isKeyPressed = checkIfSomeKeyPressed();
     boardIo_writeLed2(isKeyPressed);
   }
 }
 
-void keyboardMain_updateInputSlotInidicatorLed() {
+void keyboardMain_updateInputSlotIndicatorLed() {
   if (optionAffectKeyHoldStateToLed) {
     bool isKeyPressed = checkIfSomeInputSlotKeyPressed();
     boardIo_writeLed2(isKeyPressed);
@@ -463,7 +468,7 @@ void keyboardMain_updateInputSlotInidicatorLed() {
 void keyboardMain_taskFlashHeartbeatLed() {
   if (optionUseHeartbeatLed) {
     boardIo_writeLed1(true);
-    delayMs(2);
+    system_delayMs(2);
     boardIo_writeLed1(false);
   }
 }
@@ -481,7 +486,7 @@ void keyboardMain_updateHostKeyboardStatusOutputModule() {
 }
 
 void keyboardMain_processUpdate() {
-  usbIoCore_processUpdate();
+  // usbIoCore_processUpdate();
   keyboardMain_exposedState.hostKeyboardStateFlags = usbIoCore_hidKeyboard_getStatusLedFlags();
   configuratorServant_processUpdate();
   configManager_processUpdate();
@@ -492,10 +497,10 @@ void keyboardMain_setKeySlotStateChangedCallback(void (*callback)(uint8_t slotIn
   keySlotStateChangedCallback = callback;
 }
 
-void keyboardMain_feedKeyState(int keyIndex, bool pressed){
+void keyboardMain_feedKeyState(int keyIndex, bool pressed) {
   bool current = keyStateBuf[keyIndex];
   bool next = pressed;
-  if(next != current){
+  if (next != current) {
     onPhysicalKeyStateChanged(keyIndex, next);
   }
   keyStateBuf[keyIndex] = next;
