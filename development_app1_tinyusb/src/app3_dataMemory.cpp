@@ -1,7 +1,7 @@
 #include "BoardLED.hpp"
 #include "Button.hpp"
-#include "domain/dataMemory.h"
-#include "infrastructure/flashPersistSector.h"
+#include "km1/domain/dataMemory.h"
+#include "km1/infrastructure/flashPersistSector.h"
 #include <Arduino.h>
 
 static BoardLED boardLed(20, 19, 18, true);

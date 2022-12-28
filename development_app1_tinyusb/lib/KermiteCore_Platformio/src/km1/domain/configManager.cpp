@@ -1,13 +1,14 @@
 #include "configManager.h"
-#include "base/bitOperations.h"
-#include "base/utils.h"
+#include "../base/bitOperations.h"
+#include "../base/utils.h"
+#include "../infrastructure/system.h"
+#include "../infrastructure/xprintf.h"
 #include "commandDefinitions.h"
 #include "dataMemory.h"
 #include "dataStorage.h"
-#include "infrastructure/system.h"
-#include "infrastructure/xprintf.h"
 #include "versionDefinitions.h"
 #include <stdio.h>
+
 
 #ifdef KM0_PARAMETER_EXPOSE_FLAGS_OVERRIDE
 static bool overrideExposeFlags = true;

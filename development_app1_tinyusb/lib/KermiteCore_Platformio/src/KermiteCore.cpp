@@ -1,9 +1,5 @@
 #include "KermiteCore.h"
-#include "domain/dataMemory.h"
-#include "domain/keyboardMain.h"
-#include "infrastructure/debugUtils.h"
-#include "infrastructure/flashPersistSector.h"
-#include "infrastructure/usbIoCore.h"
+#include "km1/domain/keyboardMain.h"
 
 void KermiteCore::begin() {
   keyboardMain_initialize();

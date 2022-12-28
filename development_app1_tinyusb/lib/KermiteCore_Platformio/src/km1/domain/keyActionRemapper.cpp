@@ -1,8 +1,9 @@
 #include "keyActionRemapper.h"
+#include "../domain/dataMemory.h"
 #include "dataStorage.h"
 #include "keyCodes.h"
-#include "domain/dataMemory.h"
 #include <stdio.h>
+
 
 static const uint8_t RoutingChannelValueAny = 15;
 static const uint8_t KeyCodeSourceValueNone = LK_NONE;

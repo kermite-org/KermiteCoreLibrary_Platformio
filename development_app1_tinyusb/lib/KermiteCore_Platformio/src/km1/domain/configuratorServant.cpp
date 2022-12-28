@@ -1,15 +1,16 @@
 #include "configuratorServant.h"
-#include "base/utils.h"
+#include "../base/utils.h"
+#include "../infrastructure/usbIoCore.h"
+#include "../infrastructure/xprintf.h"
 #include "commandDefinitions.h"
 #include "configManager.h"
 #include "dataMemory.h"
 #include "dataStorage.h"
 #include "firmwareMetadata.h"
-#include "infrastructure/usbIoCore.h"
-#include "infrastructure/xprintf.h"
 #include "versionDefinitions.h"
 #include <stdio.h>
 #include <string.h>
+
 
 //---------------------------------------------
 enum {

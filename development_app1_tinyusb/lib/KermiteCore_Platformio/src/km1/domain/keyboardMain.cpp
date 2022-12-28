@@ -1,20 +1,21 @@
 #include "keyboardMain.h"
-#include "base/bitOperations.h"
-#include "base/utils.h"
+#include "../base/bitOperations.h"
+#include "../base/utils.h"
+#include "../infrastructure/flashPersistSector.h"
+#include "../infrastructure/system.h"
+#include "../infrastructure/usbIoCore.h"
+#include "../infrastructure/xprintf.h"
 #include "commandDefinitions.h"
 #include "configManager.h"
 #include "configuratorServant.h"
 #include "dataMemory.h"
 #include "dataStorage.h"
 #include "firmwareMetadata.h"
-#include "infrastructure/flashPersistSector.h"
-#include "infrastructure/system.h"
-#include "infrastructure/usbIoCore.h"
-#include "infrastructure/xprintf.h"
 #include "keyMappingDataValidator.h"
 #include "keyboardCoreLogic.h"
 #include "versionDefinitions.h"
 #include <stdio.h>
+
 
 //----------------------------------------------------------------------
 //definitions

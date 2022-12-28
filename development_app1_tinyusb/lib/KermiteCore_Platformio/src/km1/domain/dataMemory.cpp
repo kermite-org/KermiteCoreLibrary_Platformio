@@ -2,7 +2,7 @@
 #ifdef ARDUINO_ARCH_RP2040
 
 #include "dataMemory.h"
-#include "infrastructure/flashPersistSector.h"
+#include "../infrastructure/flashPersistSector.h"
 #include <string.h>
 
 static const uint32_t persistDataSize = flashPersistSector_DataSize;

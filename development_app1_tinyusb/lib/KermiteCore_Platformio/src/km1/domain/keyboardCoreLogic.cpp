@@ -1,15 +1,16 @@
 #include "keyboardCoreLogic.h"
-#include "base/bitOperations.h"
-#include "base/utils.h"
+#include "../base/bitOperations.h"
+#include "../base/utils.h"
+#include "../domain/dataMemory.h"
+#include "../infrastructure/usbIoCore.h"
+#include "../infrastructure/xprintf.h"
 #include "configManager.h"
 #include "dataStorage.h"
-#include "domain/dataMemory.h"
-#include "infrastructure/usbIoCore.h"
-#include "infrastructure/xprintf.h"
 #include "keyActionRemapper.h"
 #include "keyCodeTranslator.h"
 #include "keyCodes.h"
 #include <stdio.h>
+
 
 /*
 software/src/shell/services/keyboardLogic/inputLogicSimulatorD/KeyboardCoreLogicImplementation.ts

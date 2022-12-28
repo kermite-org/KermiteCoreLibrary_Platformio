@@ -1,5 +1,5 @@
 #include "firmwareMetadata.h"
-#include "base/utils.h"
+#include "../base/utils.h"
 #include "kmTypes.h"
 
 #ifndef KERMITE_FIRMWARE_ID

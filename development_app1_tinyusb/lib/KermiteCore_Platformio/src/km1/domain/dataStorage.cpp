@@ -1,13 +1,14 @@
 #include "dataStorage.h"
-#include "base/utils.h"
+#include "../base/utils.h"
+#include "../infrastructure/system.h"
+#include "../infrastructure/xprintf.h"
 #include "commandDefinitions.h"
 #include "dataMemory.h"
 #include "firmwareMetadata.h"
-#include "infrastructure/system.h"
-#include "infrastructure/xprintf.h"
 #include "kmTypes.h"
 #include "versionDefinitions.h"
 #include <stdio.h>
+
 
 #ifndef KM0_STORAGE__USER_STORAGE_SIZE
 #define KM0_STORAGE__USER_STORAGE_SIZE 0
