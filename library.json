@@ -1,0 +1,22 @@
+{
+  "name": "KermiteCore_PlatformIO",
+  "version": "0.1.0",
+  "description": "Kermite firmware library for PlatformIO",
+  "keywords": "Kermite, keyboard, rp2040",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kermite-org/KermiteCore_PlatformIO.git"
+  },
+  "authors": [
+    {
+      "name": "yahiro"
+    }
+  ],
+  "license": "MIT",
+  "homepage": "https://kermite.org/",
+  "dependencies": {
+    "adafruit/Adafruit SPIFlash": "^4.0.0"
+  },
+  "frameworks": "arduino",
+  "platforms": "raspberrypi"
+}
