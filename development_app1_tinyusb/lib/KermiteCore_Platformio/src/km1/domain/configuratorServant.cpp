@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
 //---------------------------------------------
 enum {
   RawHidOpcode_ConnectionOpened = 0xf0,
@@ -172,7 +171,7 @@ static void processReadGenericHidData() {
   if (cmd == RawHidOpcode_MemoryWriteTransactionStart) {
     xprintf("memory write transaction start\n");
     //configurationMemoryReader_stop();
-    emitStateNotification(ConfiguratorServantEvent_KeyMemoryUpdationStarted);
+    emitStateNotification(ConfiguratorServantEvent_KeyMemoryUpdateStarted);
   }
 
   if (cmd == RawHidOpcode_MemoryWriteOperation) {
@@ -202,7 +201,7 @@ static void processReadGenericHidData() {
   if (cmd == RawHidOpcode_MemoryWriteTransactionDone) {
     xprintf("memory write transaction done\n");
     // configurationMemoryReader_initialize();
-    emitStateNotification(ConfiguratorServantEvent_KeyMemoryUpdationDone);
+    emitStateNotification(ConfiguratorServantEvent_KeyMemoryUpdateDone);
   }
 
   if (cmd == RawHidOpcode_ParametersReadAllRequest) {
@@ -252,7 +251,7 @@ static void processReadGenericHidData() {
 //parameter changed handler
 
 static void onParameterChanged(uint8_t eventType, uint8_t parameterIndex, uint8_t value) {
-  if (rawHidFirstConnectDone && eventType == ParameterChangeEventType_ChangedSinle) {
+  if (rawHidFirstConnectDone && eventType == ParameterChangeEventType_ChangedSingle) {
     emitSingleParameterChangedNotification(parameterIndex, value);
   }
 }

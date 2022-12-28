@@ -16,7 +16,6 @@
 #include "versionDefinitions.h"
 #include <stdio.h>
 
-
 //----------------------------------------------------------------------
 //definitions
 
@@ -260,10 +259,10 @@ static void ConfiguratorServantEventHandler(uint8_t event) {
     setSimulatorMode(false);
     setMuteMode(false);
   }
-  if (event == ConfiguratorServantEvent_KeyMemoryUpdationStarted) {
+  if (event == ConfiguratorServantEvent_KeyMemoryUpdateStarted) {
     keyboardCoreLogic_halt();
   }
-  if (event == ConfiguratorServantEvent_KeyMemoryUpdationDone) {
+  if (event == ConfiguratorServantEvent_KeyMemoryUpdateDone) {
     resetKeyboardCoreLogic();
   }
   if (event == ConfiguratorServantEvent_SimulatorModeEnabled) {
@@ -287,7 +286,7 @@ static void processKeyboardCoreLogicOutput() {
   bool changed = false;
   if (layerFlags != localLayerFlags) {
     if (optionEmitRealtimeEvents) {
-      configuratorServant_emitRelatimeLayerEvent(layerFlags);
+      configuratorServant_emitRealtimeLayerEvent(layerFlags);
     }
     if (callbacks && callbacks->layerStateChanged) {
       callbacks->layerStateChanged(layerFlags);

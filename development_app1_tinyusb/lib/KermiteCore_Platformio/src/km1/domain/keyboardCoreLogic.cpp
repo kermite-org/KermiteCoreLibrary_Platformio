@@ -11,7 +11,6 @@
 #include "keyCodes.h"
 #include <stdio.h>
 
-
 /*
 software/src/shell/services/keyboardLogic/inputLogicSimulatorD/KeyboardCoreLogicImplementation.ts
 ported to C based on the simulator code
@@ -258,7 +257,7 @@ static void keyStrokeActionQueue_shiftQueuedActionOne() {
 }
 
 //--------------------------------------------------------------------------------
-//assing memory reader
+//assign memory reader
 
 #define NumLayersMax 16
 typedef struct {
@@ -610,7 +609,7 @@ static void layerMutations_clearExclusive(uint8_t targetExclusiveGroup, int8_t s
   }
 }
 
-static void layerMutations_recoverMainLayerIfAllLayeresDisabled() {
+static void layerMutations_recoverMainLayerIfAllLayersDisabled() {
   bool isAllOff = layerState.layerActiveFlags == 0;
   if (isAllOff) {
     layerMutations_activate(0);
@@ -750,7 +749,7 @@ static void handleOperationOn(uint32_t opWord) {
   if (!isLayerCall) {
     layerMutations_clearOneshot();
   }
-  layerMutations_recoverMainLayerIfAllLayeresDisabled();
+  layerMutations_recoverMainLayerIfAllLayersDisabled();
 }
 
 static void handleOperationOff(uint32_t opWord) {
@@ -776,7 +775,7 @@ static void handleOperationOff(uint32_t opWord) {
       usbIoCore_hidConsumerControl_writeReport((uint8_t *)&keyCode);
     }
   }
-  layerMutations_recoverMainLayerIfAllLayeresDisabled();
+  layerMutations_recoverMainLayerIfAllLayersDisabled();
 }
 
 //--------------------------------------------------------------------------------

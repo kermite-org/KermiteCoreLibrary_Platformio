@@ -9,7 +9,6 @@
 #include "versionDefinitions.h"
 #include <stdio.h>
 
-
 #ifdef KM0_PARAMETER_EXPOSE_FLAGS_OVERRIDE
 static bool overrideExposeFlags = true;
 static uint16_t parameterExposeFlagsOverride = KM0_PARAMETER_EXPOSE_FLAGS_OVERRIDE;
@@ -69,7 +68,7 @@ static void notifyParameterChanged(uint8_t eventType, uint8_t parameterIndex, ui
 static void taskChangedParameterNotification() {
   for (int i = 0; i < NumSystemParameters; i++) {
     if (bit_is_on(parameterChangedFlags, i)) {
-      notifyParameterChanged(ParameterChangeEventType_ChangedSinle, i, systemParameterValues[i]);
+      notifyParameterChanged(ParameterChangeEventType_ChangedSingle, i, systemParameterValues[i]);
       bit_off(parameterChangedFlags, i);
     }
   }
@@ -151,7 +150,7 @@ void writeParameter(uint8_t parameterIndex, uint8_t value) {
   }
 }
 
-void writeParameterWuthoutNotification(uint8_t parameterIndex, uint8_t value) {
+void writeParameterWithoutNotification(uint8_t parameterIndex, uint8_t value) {
   if (validateParameter(parameterIndex, value)) {
     systemParameterValues[parameterIndex] = value;
     reserveLazySave();
@@ -196,7 +195,7 @@ void configManager_writeParameter(uint8_t parameterIndex, uint8_t value) {
 void configManager_bulkWriteParameters(uint8_t *buf, uint8_t len, uint8_t parameterIndexBase) {
   for (int i = 0; i < len; i++) {
     uint8_t value = buf[i];
-    writeParameterWuthoutNotification(i, value);
+    writeParameterWithoutNotification(i, value);
   }
   reserveAllParameterChangedNotification();
 }
@@ -205,7 +204,7 @@ void configManager_resetSystemParameters() {
   uint8_t *pDefaultValues = (uint8_t *)&systemParametersDefault;
   for (int i = 0; i < NumSystemParameters; i++) {
     uint8_t value = pDefaultValues[i];
-    writeParameterWuthoutNotification(i, value);
+    writeParameterWithoutNotification(i, value);
   }
   reserveAllParameterChangedNotification();
 }
@@ -289,6 +288,6 @@ uint8_t *configManager_getParameterValuesRawPointer() {
 void configManager_dispatchSingleParameterChangedEventsAll(
     void (*handler)(uint8_t eventType, uint8_t parameterIndex, uint8_t value)) {
   for (int i = 0; i < NumSystemParameters; i++) {
-    handler(ParameterChangeEventType_ChangedSinle, i, systemParameterValues[i]);
+    handler(ParameterChangeEventType_ChangedSingle, i, systemParameterValues[i]);
   }
 }

@@ -10,7 +10,12 @@
     "adafruit",
     "tinyusb",
     "keymapping",
-    "bootloader"
+    "bootloader",
+    "remapper",
+    "corelogic",
+    "rehold",
+    "keyindex",
+    "extr"
   ],
   "import": []
 }

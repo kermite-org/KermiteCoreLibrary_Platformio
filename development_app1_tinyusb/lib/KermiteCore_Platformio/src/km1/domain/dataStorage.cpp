@@ -9,7 +9,6 @@
 #include "versionDefinitions.h"
 #include <stdio.h>
 
-
 #ifndef KM0_STORAGE__USER_STORAGE_SIZE
 #define KM0_STORAGE__USER_STORAGE_SIZE 0
 #endif
@@ -24,7 +23,7 @@ typedef struct {
   uint8_t __reserved1[2];
   uint8_t __reserved2[8];
   uint8_t parametersDataInitializationFlag;
-  uint8_t softwareStorageFomartRevision;
+  uint8_t softwareStorageFormatRevision;
 } T_SystemData;
 
 const uint16_t SystemDataSize = sizeof(T_SystemData);
@@ -185,7 +184,7 @@ static void resetDataStorage() {
 //exports
 
 void dataStorage_initialize() {
-  xprintf("datastorage initialize\n");
+  xprintf("data storage initialize\n");
   bool storageValid = validateStorageDataFormat();
   if (!storageValid) {
     resetDataStorage();

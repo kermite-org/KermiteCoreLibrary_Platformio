@@ -4,7 +4,7 @@
 
 enum {
   ParameterChangeEventType_ChangedAll = 1,
-  ParameterChangeEventType_ChangedSinle = 2
+  ParameterChangeEventType_ChangedSingle = 2
 };
 
 void configManager_setParameterExposeFlag(uint8_t parameterIndex);
