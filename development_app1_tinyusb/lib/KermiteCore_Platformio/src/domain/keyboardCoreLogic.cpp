@@ -1,13 +1,14 @@
 #include "keyboardCoreLogic.h"
+#include "base/bitOperations.h"
+#include "base/utils.h"
 #include "configManager.h"
 #include "dataStorage.h"
+#include "domain/dataMemory.h"
+#include "infrastructure/usbIoCore.h"
+#include "infrastructure/xprintf.h"
 #include "keyActionRemapper.h"
 #include "keyCodeTranslator.h"
 #include "keyCodes.h"
-#include "base/bitOperations.h"
-#include "base/utils.h"
-#include "domain/dataMemory.h"
-#include "infrastructure/usbIoCore.h"
 #include <stdio.h>
 
 /*

@@ -1,9 +1,10 @@
 #include "dataStorage.h"
-#include "commandDefinitions.h"
-#include "firmwareMetadata.h"
 #include "base/utils.h"
+#include "commandDefinitions.h"
 #include "dataMemory.h"
+#include "firmwareMetadata.h"
 #include "infrastructure/system.h"
+#include "infrastructure/xprintf.h"
 #include "kmTypes.h"
 #include "versionDefinitions.h"
 #include <stdio.h>

@@ -1,10 +1,11 @@
 #include "configManager.h"
-#include "commandDefinitions.h"
-#include "dataStorage.h"
 #include "base/bitOperations.h"
 #include "base/utils.h"
+#include "commandDefinitions.h"
 #include "dataMemory.h"
+#include "dataStorage.h"
 #include "infrastructure/system.h"
+#include "infrastructure/xprintf.h"
 #include "versionDefinitions.h"
 #include <stdio.h>
 
@@ -112,7 +113,7 @@ uint16_t configManager_getParameterExposeFlags() {
   return parameterExposeFlags;
 }
 
-void configManager_setParameterExposeFlagsForBoardLeds(){
+void configManager_setParameterExposeFlagsForBoardLeds() {
   configManager_setParameterExposeFlag(SystemParameter_HeartbeatLed);
   configManager_setParameterExposeFlag(SystemParameter_KeyHoldIndicatorLed);
 }
