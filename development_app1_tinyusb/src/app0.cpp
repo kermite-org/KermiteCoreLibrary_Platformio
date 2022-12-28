@@ -15,11 +15,11 @@ static void updateButton() {
   button.update();
   if (button.pressed) {
     Serial.printf("pressed\n");
-    kermite.issueKeyState(0, true);
+    kermite.feedKeyState(0, true);
   }
   if (button.released) {
     Serial.printf("released\n");
-    kermite.issueKeyState(0, false);
+    kermite.feedKeyState(0, false);
   }
   boardLed.write(1, button.hold);
 }

@@ -1,29 +1,18 @@
 #include "KermiteCore.h"
 #include "domain/dataMemory.h"
+#include "domain/keyboardMainInternal.h"
 #include "infrastructure/debugUtils.h"
 #include "infrastructure/flashPersistSector.h"
 #include "infrastructure/usbIoCore.h"
 
 void KermiteCore::begin() {
-  flashPersistSector_initialize();
-  dataMemory_initialize();
-  usbIoCore_initialize();
+  keyboardMain_initialize();
 }
 
-void KermiteCore::issueKeyState(uint8_t keyIndex, bool isDown) {
-  static uint8_t reportBytes[8];
-  uint8_t outputHidKeyCode = 4;
-  reportBytes[2] = isDown ? outputHidKeyCode : 0;
-  usbIoCore_hidKeyboard_writeReport(reportBytes);
+void KermiteCore::feedKeyState(int keyIndex, bool pressed) {
+  keyboardMain_feedKeyState(keyIndex, pressed);
 }
-
-static uint8_t rawHidTempBuf[64];
 
 void KermiteCore::processUpdate() {
-  bool hasData = usbIoCore_rawHid_readDataIfExists(rawHidTempBuf);
-  //todo: handle rawHid commands
-  if (hasData) {
-    debugUtils_printBytes(rawHidTempBuf, 64);
-  }
-  dataMemory_processTick();
+  keyboardMain_processUpdate();
 }

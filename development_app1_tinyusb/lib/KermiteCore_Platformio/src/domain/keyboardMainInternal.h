@@ -39,3 +39,5 @@ void keyboardMain_updateHostKeyboardStatusOutputModule();
 void keyboardMain_taskFlashHeartbeatLed();
 void keyboardMain_processUpdate();
 void keyboardMain_setKeySlotStateChangedCallback(void (*callback)(uint8_t slotIndex, bool isDown));
+
+void keyboardMain_feedKeyState(int keyIndex, bool pressed);

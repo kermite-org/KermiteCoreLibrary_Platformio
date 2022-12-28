@@ -93,6 +93,8 @@ KeySlotStateChangedCallback keySlotStateChangedCallback = NULL;
 
 static uint8_t blankHidReport[8] = { 0 };
 
+static bool keyStateBuf[KM0_KEYBOARD__NUM_SCAN_SLOTS];
+
 //----------------------------------------------------------------------
 //helpers
 
@@ -402,6 +404,8 @@ void keyboardMain_initialize() {
   configManager_setParameterExposeFlag(SystemParameter_EmitRealtimeEvents);
   configManager_setParameterExposeFlag(SystemParameter_SystemLayout);
   configManager_setParameterExposeFlag(SystemParameter_WiringMode);
+
+  flashPersistSector_initialize();
   dataMemory_initialize();
   dataStorage_initialize();
   configManager_addParameterChangeListener(parameterValueHandler);
@@ -409,6 +413,8 @@ void keyboardMain_initialize() {
   resetKeyboardCoreLogic();
   configuratorServant_initialize(ConfiguratorServantEventHandler);
   setupUsbDeviceAttributes();
+
+  usbIoCore_initialize();
 }
 
 void keyboardMain_udpateKeyScanners() {
@@ -484,4 +490,13 @@ void keyboardMain_processUpdate() {
 
 void keyboardMain_setKeySlotStateChangedCallback(void (*callback)(uint8_t slotIndex, bool isDown)) {
   keySlotStateChangedCallback = callback;
+}
+
+void keyboardMain_feedKeyState(int keyIndex, bool pressed){
+  bool current = keyStateBuf[keyIndex];
+  bool next = pressed;
+  if(next != current){
+    onPhysicalKeyStateChanged(keyIndex, next);
+  }
+  keyStateBuf[keyIndex] = next;
 }
