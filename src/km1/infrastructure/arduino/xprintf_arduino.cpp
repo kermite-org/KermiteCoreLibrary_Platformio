@@ -5,8 +5,19 @@
 //https://gist.github.com/ridencww/4e5d10097fee0b0f7f6b
 
 #ifdef KERMITE_CORE_DEBUG_LOG
+bool debugLogEnabled = true;
+#else
+bool debugLogEnabled = false;
+#endif
+
+void xprintf_turnOnDebugLogging() {
+  debugLogEnabled = true;
+}
 
 void xprintf(const char *fmt, ...) {
+  if (!debugLogEnabled) {
+    return;
+  }
   auto &serial = Serial;
   va_list argv;
   va_start(argv, fmt);
@@ -65,9 +76,3 @@ void xprintf(const char *fmt, ...) {
   }
   va_end(argv);
 }
-
-#else
-
-void xprintf(const char *fmt, ...) {}
-
-#endif

@@ -30,6 +30,7 @@ void app0Entry() {
 
   kermite.setKeyboardName("mykbd");
   kermite.setFirmwareId("Y1NFrC");
+  kermite.enableDebugLogging();
   kermite.begin();
   boardLed.write(0, false);
 

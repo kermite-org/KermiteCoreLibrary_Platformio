@@ -1,13 +1,10 @@
 #include "KermiteCore.h"
 #include "km1/domain/firmwareMetadata.h"
 #include "km1/domain/keyboardMain.h"
+#include "km1/infrastructure/xprintf.h"
 
 KermiteCore::KermiteCore() {
   firmwareMetadata_initialize();
-}
-
-void KermiteCore::begin() {
-  keyboardMain_initialize();
 }
 
 void KermiteCore::setKeyboardName(const char *keyboardName) {
@@ -16,6 +13,14 @@ void KermiteCore::setKeyboardName(const char *keyboardName) {
 
 void KermiteCore::setFirmwareId(const char *firmwareId) {
   firmwareMetaData_setFirmwareId(firmwareId);
+}
+
+void KermiteCore::enableDebugLogging() {
+  xprintf_turnOnDebugLogging();
+}
+
+void KermiteCore::begin() {
+  keyboardMain_initialize();
 }
 
 void KermiteCore::feedKeyState(int keyIndex, bool pressed) {
