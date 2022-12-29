@@ -1,6 +1,6 @@
 {
   "name": "KermiteCore_PlatformIO",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Kermite firmware library for PlatformIO",
   "keywords": "Kermite, keyboard, rp2040",
   "repository": {
