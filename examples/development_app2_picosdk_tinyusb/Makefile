@@ -10,7 +10,7 @@ clean:
 monitor:
 	pio run --target monitor
 
-write_uf2:
+write_uf2: build
 	cmd /c copy .pio\build\generic\firmware.uf2 D:\firmware.uf2
 
 debug: flash monitor
