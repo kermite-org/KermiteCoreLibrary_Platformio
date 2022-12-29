@@ -1,4 +1,5 @@
-#ifndef USE_TINYUSB
+
+#if defined(ARDUINO_ARCH_RP2040) && !defined(USE_TINYUSB)
 
 #include "RP2040USB.h"
 #include "class/hid/hid_device.h"
