@@ -49,6 +49,17 @@ static void updateButton() {
   boardLed.write(1, buttons[0].hold);
 }
 
+static void echoBackRawHid() {
+  static uint8_t rxbuf[64];
+  bool hasData = usbIoCore_rawHid_readDataIfExists(rxbuf);
+  if (hasData) {
+    for (int i = 0; i < 64; i++) {
+      rxbuf[i]++;
+    }
+    usbIoCore_rawHid_writeData(rxbuf);
+  }
+}
+
 void app0Entry() {
   boardLed.initialize();
 
@@ -65,6 +76,7 @@ void app0Entry() {
     if (cnt % 10 == 0) {
       updateButton();
     }
+    echoBackRawHid();
     cnt++;
     delay(1);
   }

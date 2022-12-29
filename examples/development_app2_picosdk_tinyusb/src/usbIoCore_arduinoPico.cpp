@@ -6,6 +6,15 @@ void __USBInstallKeyboard() {}
 void __USBInstallMouse() {}
 void __USBInstallSecondHID_RawHID() {}
 
+static __USBDeviceAttributes usbDeviceAttrs = {
+  .vendorId = 0xF055,
+  // .productId = 0xA579,
+  .productId = 0xA57A,
+  .manufacturerName = "Kermite",
+  .productName = "unnamed keyboard",
+  .serialNumberText = "00000000"
+};
+
 static uint8_t hidKeyboardStatusLedFlags = 0;
 
 static uint8_t rawHidRxBuf[64];
@@ -27,6 +36,7 @@ void hidSetReportCallbackFn(uint8_t instance, uint8_t reportId, uint8_t reportTy
 }
 
 void usbIoCore_initialize() {
+  __USBSetDeviceAttributes(&usbDeviceAttrs);
   __USBSubscribeHIDSetReportCallback(hidSetReportCallbackFn);
 }
 
