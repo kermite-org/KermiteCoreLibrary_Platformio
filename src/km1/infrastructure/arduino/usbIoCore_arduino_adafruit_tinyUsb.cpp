@@ -100,11 +100,11 @@ bool usbIoCore_isConnectedToHost() {
   return USBDevice.ready();
 }
 
-void usbIoCore_setProductName(char *productNameText) {
+void usbIoCore_setProductName(const char *productNameText) {
   USBDevice.setProductDescriptor(productNameText);
 }
 
-void usbIoCore_setSerialNumber(char *serialNumberText) {
+void usbIoCore_setSerialNumber(const char *serialNumberText) {
   USBDevice.setSerialDescriptor(serialNumberText);
 }
 
