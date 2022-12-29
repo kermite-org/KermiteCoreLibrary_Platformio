@@ -2,8 +2,6 @@
 #include <Arduino.h>
 #include <stdarg.h>
 
-//https://gist.github.com/ridencww/4e5d10097fee0b0f7f6b
-
 #ifdef KERMITE_CORE_DEBUG_LOG
 bool debugLogEnabled = true;
 #else
@@ -14,65 +12,32 @@ void xprintf_turnOnDebugLogging() {
   debugLogEnabled = true;
 }
 
-void xprintf(const char *fmt, ...) {
+int xprintf(const char *format, ...) {
   if (!debugLogEnabled) {
-    return;
+    return 0;
   }
   auto &serial = Serial;
-  va_list argv;
-  va_start(argv, fmt);
 
-  for (int i = 0; fmt[i] != '\0'; i++) {
-    if (fmt[i] == '%') {
-      // Look for specification of number of decimal places
-      int places = 2;
-      if (fmt[i + 1] == '.')
-        i++; // alw1746: Allows %.4f precision like in stdio printf (%4f will still work).
-      if (fmt[i + 1] >= '0' && fmt[i + 1] <= '9') {
-        places = fmt[i + 1] - '0';
-        i++;
-      }
-
-      switch (fmt[++i]) {
-      case 'B':
-        serial.print("0b"); // Fall through intended
-      case 'b':
-        serial.print(va_arg(argv, int), BIN);
-        break;
-      case 'c':
-        serial.print((char)va_arg(argv, int));
-        break;
-      case 'd':
-      case 'i':
-        serial.print(va_arg(argv, int), DEC);
-        break;
-      case 'f':
-        serial.print(va_arg(argv, double), places);
-        break;
-      case 'l':
-        serial.print(va_arg(argv, long), DEC);
-        break;
-      case 'o':
-        serial.print(va_arg(argv, int) == 0 ? "off" : "on");
-        break;
-      case 's':
-        serial.print(va_arg(argv, const char *));
-        break;
-      case 'X':
-        serial.print("0x"); // Fall through intended
-      case 'x':
-        serial.print(va_arg(argv, int), HEX);
-        break;
-      case '%':
-        serial.print(fmt[i]);
-        break;
-      default:
-        serial.print("?");
-        break;
-      }
-    } else {
-      serial.print(fmt[i]);
+  //copied from
+  //https://github.com/earlephilhower/ArduinoCore-API/blob/a3ac9d18fd85aec34482e9ea9fcf2a5194563686/api/Print.cpp#L239
+  va_list arg;
+  va_start(arg, format);
+  char temp[64];
+  char *buffer = temp;
+  size_t len = vsnprintf(temp, sizeof(temp), format, arg);
+  va_end(arg);
+  if (len > sizeof(temp) - 1) {
+    buffer = new char[len + 1];
+    if (!buffer) {
+      return 0;
     }
+    va_start(arg, format);
+    vsnprintf(buffer, len + 1, format, arg);
+    va_end(arg);
   }
-  va_end(argv);
+  len = serial.write((const uint8_t *)buffer, len);
+  if (buffer != temp) {
+    delete[] buffer;
+  }
+  return len;
 }

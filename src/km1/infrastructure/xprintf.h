@@ -2,4 +2,4 @@
 
 void xprintf_turnOnDebugLogging();
 
-void xprintf(const char *fmt, ...);
+int xprintf(const char *fmt, ...);
