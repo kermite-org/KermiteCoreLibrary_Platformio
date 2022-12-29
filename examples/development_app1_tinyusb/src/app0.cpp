@@ -27,6 +27,9 @@ static void updateButton() {
 void app0Entry() {
   boardLed.initialize();
   boardLed.write(0, true);
+
+  kermite.setKeyboardName("mykbd");
+  kermite.setFirmwareId("Y1NFrC");
   kermite.begin();
   boardLed.write(0, false);
 

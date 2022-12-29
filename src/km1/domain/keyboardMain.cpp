@@ -134,7 +134,7 @@ static void setupUsbDeviceAttributes() {
   snprintf(tempSerialNumberBuf, 39, "%.8s:%.3s:%.6s:%.6s:%.2s:%.4s",
            Kermite_CommonSerialNumberPrefix,
            Kermite_Project_McuCode,
-           KERMITE_FIRMWARE_ID,
+           commonFirmwareMetadataSecond.firmwareId,
            commonFirmwareMetadata.projectId,
            commonFirmwareMetadata.variationId,
            commonFirmwareMetadata.deviceInstanceCode);
@@ -423,6 +423,7 @@ void keyboardMain_initialize() {
   configManager_setParameterExposeFlag(SystemParameter_SystemLayout);
   configManager_setParameterExposeFlag(SystemParameter_WiringMode);
 
+  firmwareMetadata_initialize();
   flashPersistSector_initialize();
   dataMemory_initialize();
   dataStorage_initialize();

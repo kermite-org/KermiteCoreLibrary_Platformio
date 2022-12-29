@@ -148,7 +148,7 @@ static bool validateStorageDataFormat() {
   uint16_t posSystemDataBody = getChunkBodyAddress(ChunkSig_SystemData);
   dataMemory_readBytes(posSystemDataBody, tempDataBuf, 6);
   bool projectIdValid = utils_compareBytes(
-      tempDataBuf, (uint8_t *)KERMITE_FIRMWARE_ID, 6);
+      tempDataBuf, (uint8_t *)commonFirmwareMetadataSecond.firmwareId, 6);
   if (!projectIdValid) {
     return false;
   }
@@ -174,7 +174,9 @@ static void resetDataStorage() {
   uint16_t posSystemDataBody = getChunkBodyAddress(ChunkSig_SystemData);
   if (posSystemDataBody) {
     //write project id
-    dataMemory_writeBytes(posSystemDataBody, (uint8_t *)KERMITE_FIRMWARE_ID, 6);
+    dataMemory_writeBytes(
+        posSystemDataBody,
+        (uint8_t *)commonFirmwareMetadataSecond.firmwareId, 6);
     //write default instance number
     dataMemory_writeBytes(posSystemDataBody + 8, (uint8_t *)"00000000", 8);
   }
