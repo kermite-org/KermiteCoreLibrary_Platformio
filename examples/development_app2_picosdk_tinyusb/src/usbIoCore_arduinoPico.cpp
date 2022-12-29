@@ -8,8 +8,8 @@ void __USBInstallSecondHID_RawHID() {}
 
 static __USBDeviceAttributes usbDeviceAttrs = {
   .vendorId = 0xF055,
-  // .productId = 0xA579,
-  .productId = 0xA57A,
+  .productId = 0xA579,
+  // .productId = 0xA57A, //debug
   .manufacturerName = "Kermite",
   .productName = "unnamed keyboard",
   .serialNumberText = "00000000"
@@ -60,6 +60,10 @@ void usbIoCore_hidMouse_writeReport(uint8_t *pReportBytes7) {
   }
 }
 
+void usbIoCore_hidConsumerControl_writeReport(uint8_t *pReportBytes2) {
+  // todo: support consumer control
+}
+
 void usbIoCore_rawHid_writeData(uint8_t *pDataBytes64) {
   const int instance = __USBGetHIDInstanceIndexForRawHID();
   if (tud_hid_n_ready(instance)) {
@@ -74,4 +78,16 @@ bool usbIoCore_rawHid_readDataIfExists(uint8_t *pDataBytes64) {
     return true;
   }
   return false;
+}
+
+bool usbIoCore_isConnectedToHost() {
+  return tud_hid_ready();
+}
+
+void usbIoCore_setProductName(const char *productNameText) {
+  usbDeviceAttrs.productName = productNameText;
+}
+
+void usbIoCore_setSerialNumber(const char *serialNumberText) {
+  usbDeviceAttrs.serialNumberText = serialNumberText;
 }

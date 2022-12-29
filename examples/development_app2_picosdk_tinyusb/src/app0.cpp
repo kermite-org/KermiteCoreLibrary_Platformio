@@ -63,6 +63,8 @@ static void echoBackRawHid() {
 void app0Entry() {
   boardLed.initialize();
 
+  usbIoCore_setProductName("mykeeb1");
+  usbIoCore_setSerialNumber("1234abcd");
   usbIoCore_initialize();
 
   while (1) {
