@@ -7,6 +7,7 @@
 
 void __USBInstallKeyboard() {}
 void __USBInstallMouse() {}
+void __USBInstallConsumerControl() {}
 void __USBInstallSecondHID_RawHID() {}
 
 static __USBDeviceAttributes usbDeviceAttrs = {
@@ -39,7 +40,7 @@ void hidSetReportCallbackFn(uint8_t instance, uint8_t reportId, uint8_t reportTy
 }
 
 void usbIoCore_initialize() {
-  __USBSetDeviceAttributes(&usbDeviceAttrs);
+  __USBSetDeviceAttributes(usbDeviceAttrs);
   __USBSubscribeHIDSetReportCallback(hidSetReportCallbackFn);
 }
 
@@ -64,7 +65,11 @@ void usbIoCore_hidMouse_writeReport(uint8_t *pReportBytes7) {
 }
 
 void usbIoCore_hidConsumerControl_writeReport(uint8_t *pReportBytes2) {
-  // todo: support consumer control
+  const int instance = __USBGetHIDInstanceIndexForSharedHID();
+  const int reportId = __USBGetConsumerControlReportID();
+  if (tud_hid_n_ready(instance)) {
+    tud_hid_n_report(instance, reportId, pReportBytes2, 2);
+  }
 }
 
 void usbIoCore_rawHid_writeData(uint8_t *pDataBytes64) {
