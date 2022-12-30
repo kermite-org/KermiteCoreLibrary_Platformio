@@ -1,6 +1,6 @@
 #include "BoardLED.hpp"
 #include "Button.hpp"
-#include "usbIoCore.h"
+#include "km1/infrastructure/usbIoCore.h"
 #include <Arduino.h>
 
 // tested on Tiny2040

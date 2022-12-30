@@ -1,3 +1,5 @@
+#if defined(ARDUINO_ARCH_RP2040) && defined(USE_ADAFRUIT_SPI_FLASH)
+
 #include "../flashPersistSector.h"
 #include <Adafruit_FlashTransport.h>
 #include <Adafruit_SPIFlash.h>
@@ -39,3 +41,5 @@ void flashPersistSector_write(uint8_t *bytes4096) {
     flash.writeBuffer(persistDataLocationOffset, bytes4096, persistDataSize);
   }
 }
+
+#endif
