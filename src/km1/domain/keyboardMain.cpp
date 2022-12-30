@@ -424,7 +424,6 @@ void keyboardMain_initialize() {
   configManager_setParameterExposeFlag(SystemParameter_WiringMode);
 
   firmwareMetadata_initialize();
-  flashPersistSector_initialize();
   dataMemory_initialize();
   dataStorage_initialize();
   configManager_addParameterChangeListener(parameterValueHandler);

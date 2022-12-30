@@ -18,19 +18,23 @@ static const int persistDataSize = flashPersistSector_DataSize;
 
 static const uint32_t persistDataLocationOffset = flashDataAreaSize - persistDataSize;
 
-void flashPersistSector_initialize() {
-  if (flashDataAreaSize > 0) {
+void ensureInitialized() {
+  static bool initialized = false;
+  if (!initialized) {
     flash.begin();
+    initialized = true;
   }
 }
 
 void flashPersistSector_read(uint8_t *bytes4096) {
   if (flashDataAreaSize > 0) {
+    ensureInitialized();
     flash.readBuffer(persistDataLocationOffset, bytes4096, persistDataSize);
   }
 }
 void flashPersistSector_write(uint8_t *bytes4096) {
   if (flashDataAreaSize > 0) {
+    ensureInitialized();
     flash.eraseSector(persistDataLocationOffset / 4096);
     flash.writeBuffer(persistDataLocationOffset, bytes4096, persistDataSize);
   }
