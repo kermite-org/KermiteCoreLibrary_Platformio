@@ -1,4 +1,4 @@
-#if defined(ARDUINO_ARCH_RP2040) && defined(USE_ADAFRUIT_SPI_FLASH)
+#if defined(ARDUINO_ARCH_RP2040) && defined(USE_ADAFRUIT_SPIFLASH)
 
 #include "../flashPersistSector.h"
 #include <Adafruit_FlashTransport.h>

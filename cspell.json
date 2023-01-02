@@ -16,7 +16,8 @@
     "rehold",
     "keyindex",
     "extr",
-    "rawhid"
+    "rawhid",
+    "spiflash"
   ],
   "import": []
 }
