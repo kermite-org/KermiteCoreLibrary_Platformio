@@ -1,3 +1,3 @@
-kermite core library for platformio
+# KermiteCore_Arduino
 
-under development
+Kermite firmware library for Arduino and PlatformIO.
