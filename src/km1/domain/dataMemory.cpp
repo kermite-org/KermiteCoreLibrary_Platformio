@@ -1,5 +1,4 @@
 
-#ifdef ARDUINO_ARCH_RP2040
 
 #include "dataMemory.h"
 #include "../infrastructure/flashPersistSector.h"
@@ -76,5 +75,3 @@ void dataMemory_initialize() {
 void dataMemory_processTick() {
   processSaving();
 }
-
-#endif
