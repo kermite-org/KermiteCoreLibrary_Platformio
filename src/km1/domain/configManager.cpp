@@ -273,7 +273,8 @@ void configManager_processUpdate() {
   taskChangedParameterNotification();
   if (reqRestToDfu) {
     reqRestToDfu = false;
-    system_jumpToDfuBootloader();
+    //we don't support reset-to-bootloader feature in arduino porting.
+    //system_jumpToDfuBootloader();
   }
 }
 
