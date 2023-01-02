@@ -365,7 +365,7 @@ static const LogicalKeyItem logicalKeyItems[] = {
 #define NumLogicalKeyItems sizeof(logicalKeyItems) / sizeof(LogicalKeyItem)
 
 static const LogicalKeyItem *getLogicalKeyItem(uint8_t logicalKey) {
-  for (int i = 0; i < NumLogicalKeyItems; i++) {
+  for (uint i = 0; i < NumLogicalKeyItems; i++) {
     if (logicalKeyItems[i].logicalKey == logicalKey) {
       return &logicalKeyItems[i];
     }

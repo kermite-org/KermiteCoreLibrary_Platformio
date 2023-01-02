@@ -208,18 +208,16 @@ static void keyStrokeActionQueue_enqueueActionRaw(OutputKeyStrokeAction action) 
 
 static void keyStrokeActionQueue_enqueueAction(OutputKeyStrokeAction action) {
   if (action.shiftCancel > 0 || action.modFlags > 0) {
-    OutputKeyStrokeAction modAction = {
-      isDown : action.isDown,
-      shiftCancel : action.shiftCancel,
-      modFlags : action.modFlags,
-    };
+    OutputKeyStrokeAction modAction = {};
+    modAction.isDown = action.isDown;
+    modAction.shiftCancel = action.shiftCancel;
+    modAction.modFlags = action.modFlags;
     keyStrokeActionQueue_enqueueActionRaw(modAction);
   }
   if (action.hidKeyCode > 0) {
-    OutputKeyStrokeAction keyAction = {
-      isDown : action.isDown,
-      hidKeyCode : action.hidKeyCode,
-    };
+    OutputKeyStrokeAction keyAction = {};
+    keyAction.isDown = action.isDown;
+    keyAction.hidKeyCode = action.hidKeyCode;
     keyStrokeActionQueue_enqueueActionRaw(keyAction);
   }
 }

@@ -54,7 +54,7 @@ Hold the key state on the left hand side in the first half and on the right hand
 static uint16_t localLayerFlags = 0;
 static uint8_t localHidReport[8];
 static uint8_t blankHidReport[8];
-static uint8_t localHidMouseReport[7];
+// static uint8_t localHidMouseReport[7];
 
 static bool isSimulatorModeEnabled = false;
 static bool isMuteModeEnabled = false;
@@ -105,10 +105,10 @@ static void debugDumpLocalOutputState() {
   xprintf("layers: %02X\n", localLayerFlags);
 }
 
-static char *writeTextBytes(char *buf, char *text, int len) {
-  utils_copyTextBytes(buf, text, len);
-  return buf + len;
-}
+// static char *writeTextBytes(char *buf, char *text, int len) {
+//   utils_copyTextBytes(buf, text, len);
+//   return buf + len;
+// }
 
 //usb serial number
 //format: <Prefix(8)>:<McuCode(3)>:<FirmwareId(6)>:<ProjectId(6)>:<VariationId(2)>:<DeviceInstanceCode(4)>
@@ -141,7 +141,7 @@ static void setupUsbDeviceAttributes() {
   usbIoCore_setSerialNumber(tempSerialNumberBuf);
 
   // usbIoCore_setProductName(commonFirmwareMetadata.keyboardName);
-  snprintf(tempProductNameBuf, 32, "%s #%s", commonFirmwareMetadata.keyboardName, commonFirmwareMetadata.deviceInstanceCode);
+  snprintf(tempProductNameBuf, 32, "%.25s #%.4s", commonFirmwareMetadata.keyboardName, commonFirmwareMetadata.deviceInstanceCode);
   usbIoCore_setProductName(tempProductNameBuf);
 }
 

@@ -30,5 +30,6 @@
 #if defined KERMITE_TARGET_MCU_RP2040
 #define Kermite_Project_McuCode "M02"
 #else
-#error KERMITE_TARGET_MCU_* is not defined
+// #error KERMITE_TARGET_MCU_* is not defined
+#define Kermite_Project_McuCode "M00"
 #endif
