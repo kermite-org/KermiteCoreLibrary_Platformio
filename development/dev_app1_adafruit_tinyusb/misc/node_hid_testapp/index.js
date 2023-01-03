@@ -7,12 +7,18 @@ function start() {
     (d) =>
       d.vendorId === 0xf055 &&
       d.productId === 0xa57a &&
-      d.usagePage === 65280 &&
-      d.usage === 1
+      d.usagePage === 0xff00 &&
+      d.usage === 0x01
   );
   console.log({ deviceInfo });
   if (deviceInfo) {
     const device = new HID.HID(deviceInfo.path);
+
+    process.on("uncaughtException", (err) => {
+      console.error(err);
+      device.close();
+      process.exit(1);
+    });
 
     const onData = (data) => {
       const bytes = new Uint8Array(data);
@@ -22,9 +28,10 @@ function start() {
 
     device.on("data", onData);
 
-    setTimeout(() => {
+    setTimeout(async () => {
       console.log("sending...");
-      device.write([0x04, 0x01, 0x01, 0x05, 0xff, 0xff]);
+      const rawHidReportId = 2;
+      device.write([rawHidReportId, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15]);
     }, 1000);
 
     process.on("SIGINT", function () {
