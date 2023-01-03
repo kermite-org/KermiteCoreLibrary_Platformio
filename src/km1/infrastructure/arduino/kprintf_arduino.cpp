@@ -1,4 +1,4 @@
-#include "../xprintf.h"
+#include "../kprintf.h"
 #include <Arduino.h>
 #include <stdarg.h>
 
@@ -8,11 +8,11 @@ bool debugLogEnabled = true;
 bool debugLogEnabled = false;
 #endif
 
-void xprintf_turnOnDebugLogging() {
+void kprintf_turnOnDebugLogging() {
   debugLogEnabled = true;
 }
 
-int xprintf(const char *format, ...) {
+int kprintf(const char *format, ...) {
   if (!debugLogEnabled) {
     return 0;
   }

@@ -1,7 +1,7 @@
 #include "dataStorage.h"
 #include "../base/utils.h"
+#include "../infrastructure/kprintf.h"
 #include "../infrastructure/system.h"
-#include "../infrastructure/xprintf.h"
 #include "commandDefinitions.h"
 #include "dataMemory.h"
 #include "firmwareMetadata.h"
@@ -50,7 +50,7 @@ enum {
 
 static void seekChunk(uint16_t chunkSig, uint16_t posStart, uint16_t posEnd, uint16_t *out_addr, uint16_t *out_size) {
   uint16_t pos = posStart;
-  // xprintf("--seek chunk %x\n", chunkSig);
+  // kprintf("--seek chunk %x\n", chunkSig);
   while (pos < posEnd) {
     uint16_t head = dataMemory_readWord(pos);
     uint16_t size = dataMemory_readWord(pos + 2);
@@ -58,7 +58,7 @@ static void seekChunk(uint16_t chunkSig, uint16_t posStart, uint16_t posEnd, uin
       pos += 4;
       *out_addr = pos;
       *out_size = size;
-      // xprintf("chunk %x found, pos:%d size:%d\n", chunkSig, pos, size);
+      // kprintf("chunk %x found, pos:%d size:%d\n", chunkSig, pos, size);
       return;
     } else {
       if (size == 0) {
@@ -156,7 +156,7 @@ static bool validateStorageDataFormat() {
 }
 
 static void resetDataStorage() {
-  xprintf("reset data storage for new project\n");
+  kprintf("reset data storage for new project\n");
   dataMemory_clearAllZero();
   dataMemory_writeWord(0, StorageHeadMagicNumber);
   uint16_t pos = 2;
@@ -186,12 +186,12 @@ static void resetDataStorage() {
 //exports
 
 void dataStorage_initialize() {
-  xprintf("data storage initialize\n");
+  kprintf("data storage initialize\n");
   bool storageValid = validateStorageDataFormat();
   if (!storageValid) {
     resetDataStorage();
   } else {
-    xprintf("storage data valid\n");
+    kprintf("storage data valid\n");
   }
 }
 

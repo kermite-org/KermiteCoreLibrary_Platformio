@@ -2,9 +2,9 @@
 #include "../base/bitOperations.h"
 #include "../base/utils.h"
 #include "../infrastructure/flashPersistSector.h"
+#include "../infrastructure/kprintf.h"
 #include "../infrastructure/system.h"
 #include "../infrastructure/usbIoCore.h"
-#include "../infrastructure/xprintf.h"
 #include "commandDefinitions.h"
 #include "configManager.h"
 #include "configuratorServant.h"
@@ -97,12 +97,12 @@ static bool keyStateBuf[KM0_KEYBOARD__NUM_SCAN_SLOTS];
 //helpers
 
 static void debugDumpLocalOutputState() {
-  xprintf("HID report:[");
+  kprintf("HID report:[");
   for (uint16_t i = 0; i < 8; i++) {
-    xprintf("%02X ", localHidReport[i]);
+    kprintf("%02X ", localHidReport[i]);
   }
-  xprintf("], ");
-  xprintf("layers: %02X\n", localLayerFlags);
+  kprintf("], ");
+  kprintf("layers: %02X\n", localLayerFlags);
 }
 
 // static char *writeTextBytes(char *buf, char *text, int len) {
@@ -224,10 +224,10 @@ static void parameterValueHandler(uint8_t eventType, uint8_t slotIndex, uint8_t 
     // keyboardMain_exposedState.optionInvertSide = value == 1;
   } else if (slotIndex == SystemParameter_SystemLayout) {
     keyboardCoreLogic_setSystemLayout(value);
-    xprintf("system layout: %s\n", value == 1 ? "JIS" : "US");
+    kprintf("system layout: %s\n", value == 1 ? "JIS" : "US");
   } else if (slotIndex == SystemParameter_WiringMode) {
     keyboardCoreLogic_setWiringMode(value);
-    xprintf("routing channel: %s\n", value == 1 ? "Alter" : "Main");
+    kprintf("routing channel: %s\n", value == 1 ? "Alter" : "Main");
   }
 
   if (callbacks && callbacks->customParameterHandlerExtended) {
@@ -237,7 +237,7 @@ static void parameterValueHandler(uint8_t eventType, uint8_t slotIndex, uint8_t 
 
 static void setSimulatorMode(bool enabled) {
   if (isSimulatorModeEnabled != enabled) {
-    xprintf("simulator mode: %s\n", enabled ? "on" : "off");
+    kprintf("simulator mode: %s\n", enabled ? "on" : "off");
     isSimulatorModeEnabled = enabled;
     if (!enabled) {
       usbIoCore_hidKeyboard_writeReport(blankHidReport);
@@ -247,7 +247,7 @@ static void setSimulatorMode(bool enabled) {
 
 static void setMuteMode(bool enabled) {
   if (isMuteModeEnabled != enabled) {
-    xprintf("output mute: %s\n", enabled ? "on" : "off");
+    kprintf("output mute: %s\n", enabled ? "on" : "off");
     isMuteModeEnabled = enabled;
   }
 }
@@ -323,10 +323,10 @@ static void onPhysicalKeyStateChanged(uint8_t scanIndex, bool isDown) {
   // }
 
   if (isDown) {
-    xprintf("keydown %d\n", keyIndex);
+    kprintf("keydown %d\n", keyIndex);
     keyboardMain_exposedState.pressedKeyIndex = keyIndex;
   } else {
-    xprintf("keyup %d\n", keyIndex);
+    kprintf("keyup %d\n", keyIndex);
     keyboardMain_exposedState.pressedKeyIndex = KEYINDEX_NONE;
   }
 

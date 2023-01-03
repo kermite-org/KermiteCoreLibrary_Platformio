@@ -1,7 +1,7 @@
 #include "KermiteCore.h"
 #include "km1/domain/firmwareMetadata.h"
 #include "km1/domain/keyboardMain.h"
-#include "km1/infrastructure/xprintf.h"
+#include "km1/infrastructure/kprintf.h"
 
 KermiteCore::KermiteCore() {
   firmwareMetadata_initialize();
@@ -16,7 +16,7 @@ void KermiteCore::setFirmwareId(const char *firmwareId) {
 }
 
 void KermiteCore::enableDebugLogging() {
-  xprintf_turnOnDebugLogging();
+  kprintf_turnOnDebugLogging();
 }
 
 void KermiteCore::begin() {

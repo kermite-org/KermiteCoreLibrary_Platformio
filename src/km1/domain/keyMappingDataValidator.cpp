@@ -1,6 +1,6 @@
 #include "keyMappingDataValidator.h"
 #include "../base/utils.h"
-#include "../infrastructure/xprintf.h"
+#include "../infrastructure/kprintf.h"
 #include "dataMemory.h"
 #include "dataStorage.h"
 #include "versionDefinitions.h"
@@ -27,7 +27,7 @@ bool keyMappingDataValidator_checkBinaryProfileDataHeader() {
     uint8_t profileBinaryFormatRevision = decode_byte(p + 2);
     uint8_t numKeys = decode_byte(p + 3);
     uint8_t numLayers = decode_byte(p + 4);
-    // xprintf("%d %d %d %d %d\n", logicModelType, configStorageFormatRevision, profileBinaryFormatRevision, numKeys, numLayers);
+    // kprintf("%d %d %d %d %d\n", logicModelType, configStorageFormatRevision, profileBinaryFormatRevision, numKeys, numLayers);
     storageHeaderValid =
         logicModelType == 0x01 &&
         configStorageFormatRevision == Kermite_ConfigStorageFormatRevision &&
@@ -37,10 +37,10 @@ bool keyMappingDataValidator_checkBinaryProfileDataHeader() {
   }
 
   if (!storageHeaderValid) {
-    xprintf("invalid key assigns data\n");
+    kprintf("invalid key assigns data\n");
     // utils_debugShowBytes(storageTempBuf, KeyMappingDataHeaderLength);
   } else {
-    xprintf("key assigns storage data is valid\n");
+    kprintf("key assigns storage data is valid\n");
   }
 
   return storageHeaderValid;
