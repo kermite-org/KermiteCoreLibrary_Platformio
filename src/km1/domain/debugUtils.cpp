@@ -1,16 +1,17 @@
-#include "../debugUtils.h"
+#include "debugUtils.h"
+#include "../infrastructure/kprintf.h"
 #include <Arduino.h>
 
 void debugUtils_printBytes(uint8_t *buf, int len) {
   for (int i = 0; i < len; i++) {
-    Serial.printf("%02X ", buf[i]);
+    kprintf("%02X ", buf[i]);
   }
-  Serial.println();
+  kprintf("\n");
 }
 
 void debugUtils_printBytesDec(uint8_t *buf, int len) {
   for (int i = 0; i < len; i++) {
-    Serial.printf("%d ", buf[i]);
+    kprintf("%d ", buf[i]);
   }
-  Serial.println();
+  kprintf("\n");
 }
