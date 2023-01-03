@@ -1,5 +1,5 @@
-
-#if defined(ARDUINO_ARCH_RP2040) && !defined(USE_TINYUSB)
+#include "../buildCondition.h"
+#if defined(KEMRITECORE_USE_USBIOCORE_RP2040_ARDUINO_PICO)
 
 #include "RP2040USB.h"
 #include "class/hid/hid_device.h"

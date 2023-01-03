@@ -1,4 +1,5 @@
-#if defined(KERMITECORE_USE_USB_DUMMY_IMPL)
+#include "../buildCondition.h"
+#if defined(KERMITECORE_USE_USBIOCORE_DUMMY_IMPL)
 
 #include "../usbIoCore.h"
 

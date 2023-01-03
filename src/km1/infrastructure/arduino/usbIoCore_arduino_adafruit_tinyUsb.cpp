@@ -1,4 +1,5 @@
-#ifdef USE_TINYUSB
+#include "../buildCondition.h"
+#if defined(KEMRITECORE_USE_USBIOCORE_ADAFRUIT_TINYUSB)
 
 #include "../usbIoCore.h"
 #include <Adafruit_TinyUSB.h>

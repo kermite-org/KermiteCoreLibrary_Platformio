@@ -1,4 +1,5 @@
-#if defined(ARDUINO_ARCH_RP2040) && !defined(USE_ADAFRUIT_SPI_FLASH)
+#include "../buildCondition.h"
+#if defined(KERMITECORE_USE_FLASH_PERSIST_SECTOR_RP2040_PICO_SDK)
 
 #include "../flashPersistSector.h"
 #include "hardware/flash.h"

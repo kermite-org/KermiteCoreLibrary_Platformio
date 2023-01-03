@@ -5,3 +5,4 @@
 .vscode/ipch
 /.local/
 node_modules/
+/lib/kermite_core_dev/

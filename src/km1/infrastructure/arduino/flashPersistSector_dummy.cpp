@@ -1,3 +1,4 @@
+#include "../buildCondition.h"
 #if defined(KERMITECORE_USE_FLASH_PERSIST_SECTOR_DUMMY_IMPL)
 
 #include "../flashPersistSector.h"
