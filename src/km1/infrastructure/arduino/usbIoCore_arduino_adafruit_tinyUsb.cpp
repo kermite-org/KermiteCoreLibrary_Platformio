@@ -11,6 +11,8 @@ enum {
   RID_CONSUMER_CONTROL,
 };
 
+static const int rawHidDataLength = 63;
+
 static const uint8_t descHidReportShared[] = {
   TUD_HID_REPORT_DESC_KEYBOARD(HID_REPORT_ID(RID_KEYBOARD)),
   TUD_HID_REPORT_DESC_MOUSE(HID_REPORT_ID(RID_MOUSE)),
@@ -18,14 +20,14 @@ static const uint8_t descHidReportShared[] = {
 };
 
 static const uint8_t descHidReportGeneric[] = {
-  TUD_HID_REPORT_DESC_GENERIC_INOUT(64),
+  TUD_HID_REPORT_DESC_GENERIC_INOUT(rawHidDataLength),
 };
 
 static Adafruit_USBD_HID hidShared(descHidReportShared, sizeof(descHidReportShared), HID_ITF_PROTOCOL_NONE, 2, true);
 
 static Adafruit_USBD_HID hidGeneric(descHidReportGeneric, sizeof(descHidReportGeneric), HID_ITF_PROTOCOL_NONE, 2, true);
 
-static uint8_t rawHidRxBuf[4][64];
+static uint8_t rawHidRxBuf[4][rawHidDataLength];
 static uint32_t rawHidRxPageCount = 0;
 
 static uint8_t keyboardLedStatus = 0;
@@ -81,17 +83,17 @@ uint8_t usbIoCore_hidKeyboard_getStatusLedFlags() {
   return keyboardLedStatus;
 }
 
-bool usbIoCore_rawHid_writeData(uint8_t *pDataBytes64) {
+bool usbIoCore_rawHid_writeData(uint8_t *pDataBytes63) {
   if (hidGeneric.ready()) {
-    hidGeneric.sendReport(0, pDataBytes64, 64);
+    hidGeneric.sendReport(0, pDataBytes63, rawHidDataLength);
     return true;
   }
   return false;
 }
 
-bool usbIoCore_rawHid_readDataIfExists(uint8_t *pDataBytes64) {
+bool usbIoCore_rawHid_readDataIfExists(uint8_t *pDataBytes63) {
   if (rawHidRxPageCount > 0) {
-    memcpy(pDataBytes64, rawHidRxBuf[--rawHidRxPageCount], 64);
+    memcpy(pDataBytes63, rawHidRxBuf[--rawHidRxPageCount], rawHidDataLength);
     return true;
   }
   return false;

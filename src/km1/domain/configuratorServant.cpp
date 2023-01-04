@@ -64,7 +64,7 @@ static void initializeDataAddresses() {
 //---------------------------------------------
 //rawhid interface
 
-static uint8_t rawHidTempBuf[64];
+static uint8_t rawHidTempBuf[63];
 
 static bool rawHidFirstConnectDone = false;
 

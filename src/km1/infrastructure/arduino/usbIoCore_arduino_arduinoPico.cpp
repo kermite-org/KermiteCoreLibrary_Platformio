@@ -19,9 +19,11 @@ static __USBDeviceAttributes usbDeviceAttrs = {
   .serialNumberText = "00000000"
 };
 
+static const int rawHidDataLength = 63;
+
 static uint8_t hidKeyboardStatusLedFlags = 0;
 
-static uint8_t rawHidRxBuf[64];
+static uint8_t rawHidRxBuf[rawHidDataLength];
 static bool rawHidRxHasData = false;
 
 void hidSetReportCallbackFn(uint8_t instance, uint8_t reportId, uint8_t reportType, uint8_t const *buffer, uint16_t bufsize) {
@@ -33,8 +35,8 @@ void hidSetReportCallbackFn(uint8_t instance, uint8_t reportId, uint8_t reportTy
       hidKeyboardStatusLedFlags = buffer[0];
     }
   }
-  if (instance == instanceRawHid && bufsize == 64) {
-    memcpy(rawHidRxBuf, buffer, 64);
+  if (instance == instanceRawHid && bufsize == rawHidDataLength) {
+    memcpy(rawHidRxBuf, buffer, rawHidDataLength);
     rawHidRxHasData = true;
   }
 }
@@ -72,16 +74,16 @@ void usbIoCore_hidConsumerControl_writeReport(uint8_t *pReportBytes2) {
   }
 }
 
-void usbIoCore_rawHid_writeData(uint8_t *pDataBytes64) {
+void usbIoCore_rawHid_writeData(uint8_t *pDataBytes63) {
   const int instance = __USBGetHIDInstanceIndexForRawHID();
   if (tud_hid_n_ready(instance)) {
-    tud_hid_n_report(instance, 0, pDataBytes64, 64);
+    tud_hid_n_report(instance, 0, pDataBytes63, rawHidDataLength);
   }
 }
 
-bool usbIoCore_rawHid_readDataIfExists(uint8_t *pDataBytes64) {
+bool usbIoCore_rawHid_readDataIfExists(uint8_t *pDataBytes63) {
   if (rawHidRxHasData) {
-    memcpy(pDataBytes64, rawHidRxBuf, 64);
+    memcpy(pDataBytes63, rawHidRxBuf, rawHidDataLength);
     rawHidRxHasData = false;
     return true;
   }
