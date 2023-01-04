@@ -13,3 +13,5 @@ bool usbIoCore_rawHid_readDataIfExists(uint8_t *pDataBytes63);
 bool usbIoCore_isConnectedToHost();
 void usbIoCore_setProductName(const char *productNameText);
 void usbIoCore_setSerialNumber(const char *serialNumberText);
+
+void usbIoCore_processUpdate() __attribute__((weak));
