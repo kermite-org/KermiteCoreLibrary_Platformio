@@ -30,7 +30,7 @@ function start() {
 
     setTimeout(async () => {
       console.log("sending...");
-      const rawHidReportId = 2;
+      const rawHidReportId = 4;
       device.write([rawHidReportId, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15]);
     }, 1000);
 

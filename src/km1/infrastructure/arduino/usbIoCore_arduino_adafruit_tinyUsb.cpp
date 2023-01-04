@@ -7,7 +7,6 @@
 #include "km1/domain/debugUtils.h"
 #include <Adafruit_TinyUSB.h>
 
-
 enum {
   RID_KEYBOARD = 1,
   RID_MOUSE,
@@ -39,7 +38,7 @@ static void hidShared_setReportCallback(uint8_t reportId, hid_report_type_t repo
     bufsize -= 1;
   }
   // kprintf("received %d %d %d\n", reportId, reportType, bufsize);
-  debugUtils_printBytes((uint8_t *)buffer, bufsize);
+  // debugUtils_printBytes((uint8_t *)buffer, bufsize);
   if (reportId == RID_KEYBOARD && bufsize == 1) {
     keyboardLedStatus = buffer[0];
   }

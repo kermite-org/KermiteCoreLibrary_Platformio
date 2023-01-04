@@ -47,7 +47,7 @@ async function start() {
         buf[0] = 10;
         buf[1] = 20;
         buf[2] = 30;
-        const rawHidReportId = 2; //todo: get from collection
+        const rawHidReportId = 4; //todo: get from collection
         device.sendReport(rawHidReportId, buf);
       }
     });
