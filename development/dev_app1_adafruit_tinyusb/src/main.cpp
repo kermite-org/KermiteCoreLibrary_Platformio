@@ -10,12 +10,12 @@ extern void app11Entry();
 extern void app12Entry();
 
 void setup() {
-  // app0Entry();
+  app0Entry();
   // app1Entry();
   // app2Entry();
   // app3Entry();
   // app4Entry();
-  app11Entry();
+  // app11Entry();
   // app12Entry();
 }
 
