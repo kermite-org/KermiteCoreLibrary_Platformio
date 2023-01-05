@@ -21,3 +21,10 @@ symlink_win_create:
 
 symlink_win_remove:
 	cmd /c rmdir lib\kermite_core_dev\src
+
+symlink_mac_create:
+	mkdir -p lib/kermite_core_dev
+	ln -snF ../../../../src lib/kermite_core_dev/src
+
+symlink_mac_remove:
+	unlink lib/kermite_core_dev/src
