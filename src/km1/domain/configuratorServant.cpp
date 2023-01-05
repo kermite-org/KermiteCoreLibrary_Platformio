@@ -72,10 +72,7 @@ static void emitGenericHidData(uint8_t *p) {
   if (!usbIoCore_isConnectedToHost()) {
     return;
   }
-  bool done = usbIoCore_rawHid_writeData(p);
-  if (!done) {
-    kprintf("[warn] failed to write rawhid data\n");
-  }
+  usbIoCore_rawHid_writeData(p);
 }
 
 static void emitRealtimePhysicalKeyStateEvent(uint8_t keyIndex, bool isDown) {

@@ -152,10 +152,9 @@ uint8_t usbIoCore_hidKeyboard_getStatusLedFlags() {
   return keyboardLedStatus;
 }
 
-bool usbIoCore_rawHid_writeData(uint8_t *pDataBytes63) {
+void usbIoCore_rawHid_writeData(uint8_t *pDataBytes63) {
   reportEmitterQueue_push(sendRawHidReport, pDataBytes63, 63);
   emitOneReportIfReady();
-  return true;
 }
 
 bool usbIoCore_rawHid_readDataIfExists(uint8_t *pDataBytes63) {
