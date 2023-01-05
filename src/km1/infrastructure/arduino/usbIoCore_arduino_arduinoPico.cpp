@@ -1,8 +1,8 @@
 #include "../buildCondition.h"
 #if defined(KEMRITECORE_USE_USBIOCORE_RP2040_ARDUINO_PICO)
 
+#include "../kprintf.h"
 #include "RP2040USB.h"
-#include "class/hid/hid_device.h"
 #include "tusb.h"
 
 void __USBInstallKeyboard() {}
@@ -19,10 +19,14 @@ static __USBDeviceAttributes usbDeviceAttrs = {
   .serialNumberText = "00000000"
 };
 
+static const int rawHidDataLength = 64;
+
 static uint8_t hidKeyboardStatusLedFlags = 0;
 
-static uint8_t rawHidRxBuf[64];
-static bool rawHidRxHasData = false;
+static uint8_t rawHidRxBuf[4][rawHidDataLength];
+static uint32_t rawHidRxPageCount = 0;
+
+// static uint8_t dvals[5]; //debug
 
 void hidSetReportCallbackFn(uint8_t instance, uint8_t reportId, uint8_t reportType, uint8_t const *buffer, uint16_t bufsize) {
   const int instanceShared = __USBGetHIDInstanceIndexForSharedHID();
@@ -33,9 +37,18 @@ void hidSetReportCallbackFn(uint8_t instance, uint8_t reportId, uint8_t reportTy
       hidKeyboardStatusLedFlags = buffer[0];
     }
   }
-  if (instance == instanceRawHid && bufsize == 64) {
-    memcpy(rawHidRxBuf, buffer, 64);
-    rawHidRxHasData = true;
+  // dvals[0] = 0xAA;
+  // dvals[1] = instance;
+  // dvals[2] = reportId;
+  // dvals[3] = reportType;
+  // dvals[4] = bufsize;
+  if (instance == instanceRawHid && reportId == 0 && bufsize <= rawHidDataLength) {
+    if (rawHidRxPageCount < 4) {
+      uint8_t *destBuf = rawHidRxBuf[rawHidRxPageCount];
+      memset(destBuf, 0, rawHidDataLength);
+      memcpy(destBuf, buffer, bufsize);
+      rawHidRxPageCount++;
+    }
   }
 }
 
@@ -44,45 +57,115 @@ void usbIoCore_initialize() {
   __USBSubscribeHIDSetReportCallback(hidSetReportCallbackFn);
 }
 
-void usbIoCore_hidKeyboard_writeReport(uint8_t *pReportBytes8) {
-  const int instance = __USBGetHIDInstanceIndexForSharedHID();
-  const int reportId = __USBGetKeyboardReportID();
-  if (tud_hid_n_ready(instance)) {
-    tud_hid_n_report(instance, reportId, pReportBytes8, 8);
+//----------
+//report emitter queue
+
+typedef void (*ReportEmitterFn)(uint8_t *report);
+typedef struct {
+  ReportEmitterFn reportEmitterFn;
+  uint8_t *reportBytes;
+} ReportQueueItem;
+
+static ReportQueueItem *reportQueue[8];
+static int reportQueue_wi = 0;
+static int reportQueue_ri = 0;
+
+static void reportEmitterQueue_push(ReportEmitterFn fn, uint8_t *report, int len) {
+  if ((reportQueue_wi + 1) & 7 == reportQueue_ri) {
+    kprintf("cannot enqueue hid report (8/8)\n");
+  } else {
+    uint8_t *reportBytes = new uint8_t[len];
+    memcpy(reportBytes, report, len);
+    ReportQueueItem *item = new ReportQueueItem();
+    item->reportEmitterFn = fn;
+    item->reportBytes = reportBytes;
+    reportQueue[reportQueue_wi] = item;
+    reportQueue_wi = (reportQueue_wi + 1) & 7;
   }
 }
+
+static ReportQueueItem *reportEmitterQueue_pop() {
+  if (reportQueue_wi != reportQueue_ri) {
+    ReportQueueItem *item = reportQueue[reportQueue_ri];
+    reportQueue[reportQueue_ri] = nullptr;
+    reportQueue_ri = (reportQueue_ri + 1) & 7;
+    return item;
+  }
+  return nullptr;
+}
+
+static void reportEmitterQueue_emitOne() {
+  ReportQueueItem *item = reportEmitterQueue_pop();
+  if (item) {
+    item->reportEmitterFn(item->reportBytes);
+    delete[] item->reportBytes;
+    delete item;
+  }
+}
+
+//----------
 
 uint8_t usbIoCore_hidKeyboard_getStatusLedFlags() {
   return hidKeyboardStatusLedFlags;
 }
 
-void usbIoCore_hidMouse_writeReport(uint8_t *pReportBytes7) {
+static void sendKeyboardReport(uint8_t *pReportBytes8) {
   const int instance = __USBGetHIDInstanceIndexForSharedHID();
-  const int reportId = __USBGetMouseReportID();
-  if (tud_hid_n_ready(instance)) {
-    tud_hid_n_report(instance, reportId, pReportBytes7, 7);
+  int reportId = __USBGetKeyboardReportID();
+  tud_hid_n_report(instance, reportId, pReportBytes8, 8);
+}
+
+static void sendMouseReport(uint8_t *pReportBytes7) {
+  const int instance = __USBGetHIDInstanceIndexForSharedHID();
+  int reportId = __USBGetMouseReportID();
+  tud_hid_n_report(instance, reportId, pReportBytes7, 7);
+}
+
+static void sendConsumerControlReport(uint8_t *pReportBytes2) {
+  const int instance = __USBGetHIDInstanceIndexForSharedHID();
+  const int reportId = __USBGetConsumerControlReportID();
+  tud_hid_n_report(instance, reportId, pReportBytes2, 2);
+}
+
+static void sendRawHidReport(uint8_t *pDataBytes63) {
+  const int instance = __USBGetHIDInstanceIndexForRawHID();
+  tud_hid_n_report(instance, 0, pDataBytes63, rawHidDataLength);
+}
+
+static void emitOneReportIfReady() {
+  const int instance1 = __USBGetHIDInstanceIndexForSharedHID();
+  const int instance2 = __USBGetHIDInstanceIndexForRawHID();
+  //todo: peek individually
+  if (tud_hid_n_ready(instance1) && tud_hid_n_ready(instance2)) {
+    reportEmitterQueue_emitOne();
   }
+}
+
+void usbIoCore_hidKeyboard_writeReport(uint8_t *pReportBytes8) {
+  reportEmitterQueue_push(sendKeyboardReport, pReportBytes8, 8);
+  emitOneReportIfReady();
+}
+
+void usbIoCore_hidMouse_writeReport(uint8_t *pReportBytes7) {
+  reportEmitterQueue_push(sendMouseReport, pReportBytes7, 7);
+  emitOneReportIfReady();
 }
 
 void usbIoCore_hidConsumerControl_writeReport(uint8_t *pReportBytes2) {
-  const int instance = __USBGetHIDInstanceIndexForSharedHID();
-  const int reportId = __USBGetConsumerControlReportID();
-  if (tud_hid_n_ready(instance)) {
-    tud_hid_n_report(instance, reportId, pReportBytes2, 2);
-  }
+  reportEmitterQueue_push(sendConsumerControlReport, pReportBytes2, 2);
+  emitOneReportIfReady();
 }
 
-void usbIoCore_rawHid_writeData(uint8_t *pDataBytes64) {
-  const int instance = __USBGetHIDInstanceIndexForRawHID();
-  if (tud_hid_n_ready(instance)) {
-    tud_hid_n_report(instance, 0, pDataBytes64, 64);
-  }
+bool usbIoCore_rawHid_writeData(uint8_t *pDataBytes63) {
+  // kprintf("debug:%d %d %d %d %d\n", dvals[0], dvals[1], dvals[2], dvals[3], dvals[4]);
+  reportEmitterQueue_push(sendRawHidReport, pDataBytes63, rawHidDataLength);
+  emitOneReportIfReady();
+  return true;
 }
 
-bool usbIoCore_rawHid_readDataIfExists(uint8_t *pDataBytes64) {
-  if (rawHidRxHasData) {
-    memcpy(pDataBytes64, rawHidRxBuf, 64);
-    rawHidRxHasData = false;
+bool usbIoCore_rawHid_readDataIfExists(uint8_t *pDataBytes63) {
+  if (rawHidRxPageCount > 0) {
+    memcpy(pDataBytes63, rawHidRxBuf[--rawHidRxPageCount], rawHidDataLength);
     return true;
   }
   return false;
@@ -98,6 +181,10 @@ void usbIoCore_setProductName(const char *productNameText) {
 
 void usbIoCore_setSerialNumber(const char *serialNumberText) {
   usbDeviceAttrs.serialNumberText = serialNumberText;
+}
+
+void usbIoCore_processUpdate() {
+  emitOneReportIfReady();
 }
 
 #endif
