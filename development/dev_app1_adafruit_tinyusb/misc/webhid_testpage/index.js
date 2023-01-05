@@ -43,8 +43,9 @@ async function start() {
     window.addEventListener("mousedown", (e) => {
       if (e.button === 2) {
         console.log("send");
-        const bytes = [10, 20, 30];
-        device.sendReport(0, new Uint8Array(bytes));
+        const bytes = new Uint8Array(1);
+        bytes[0] = 0xf2;
+        device.sendReport(0, bytes);
       }
     });
   }

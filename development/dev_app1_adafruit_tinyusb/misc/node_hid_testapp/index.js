@@ -24,7 +24,9 @@ function start() {
 
     setTimeout(() => {
       console.log("sending...");
-      device.write([0x04, 0x01, 0x01, 0x05, 0xff, 0xff]);
+      // device.write([0xf2]);
+      device.write([0, 0xf2]);
+      // device.write([0x04, 0xf2]); //[0x04, 0x01, 0x01, 0x05, 0xff, 0xff]);
     }, 1000);
 
     process.on("SIGINT", function () {
