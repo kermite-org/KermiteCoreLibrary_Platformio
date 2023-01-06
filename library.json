@@ -1,11 +1,11 @@
 {
   "name": "KermiteCore_Arduino",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Kermite firmware library for Arduino and PlatformIO",
   "keywords": "Kermite, keyboard, rp2040",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kermite-org/KermiteCore_PlatformIO.git"
+    "url": "https://github.com/kermite-org/KermiteCore_Arduino.git"
   },
   "authors": [
     {

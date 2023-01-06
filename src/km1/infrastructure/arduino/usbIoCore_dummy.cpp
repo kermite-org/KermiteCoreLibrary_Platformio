@@ -15,11 +15,9 @@ void usbIoCore_hidMouse_writeReport(uint8_t *pReportBytes7) {}
 
 void usbIoCore_hidConsumerControl_writeReport(uint8_t *pReportBytes2) {}
 
-bool usbIoCore_rawHid_writeData(uint8_t *pDataBytes64) {
-  return true;
-}
+void usbIoCore_rawHid_writeData(uint8_t *pDataBytes63) {}
 
-bool usbIoCore_rawHid_readDataIfExists(uint8_t *pDataBytes64) {
+bool usbIoCore_rawHid_readDataIfExists(uint8_t *pDataBytes63) {
   return true;
 }
 

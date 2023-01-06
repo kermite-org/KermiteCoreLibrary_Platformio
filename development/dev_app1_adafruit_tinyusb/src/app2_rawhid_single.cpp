@@ -15,10 +15,6 @@ static const uint8_t desc_hid_report[] = {
 
 static Adafruit_USBD_HID usb_hid(desc_hid_report, sizeof(desc_hid_report), HID_ITF_PROTOCOL_NONE, 2, true);
 
-static void set_report_callback(uint8_t report_id, hid_report_type_t report_type, uint8_t const *buffer, uint16_t bufsize) {
-  usb_hid.sendReport(0, buffer, bufsize);
-}
-
 static void sendTestData() {
   static uint8_t rawHidTxBuf[64];
   if (usb_hid.ready()) {
@@ -36,6 +32,11 @@ static void updateButton() {
     sendTestData();
   }
   boardLed.write(1, button.hold);
+}
+
+static void set_report_callback(uint8_t report_id, hid_report_type_t report_type, uint8_t const *buffer, uint16_t bufsize) {
+  boardLed.toggle(2);
+  usb_hid.sendReport(0, buffer, bufsize);
 }
 
 void app2Entry() {
