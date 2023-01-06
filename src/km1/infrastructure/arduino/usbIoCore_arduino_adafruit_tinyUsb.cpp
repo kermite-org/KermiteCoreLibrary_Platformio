@@ -1,6 +1,11 @@
 #include "../buildCondition.h"
 #if defined(KEMRITECORE_USE_USBIOCORE_ADAFRUIT_TINYUSB)
 
+#include "tusb_config.h"
+#if CFG_TUD_HID < 2
+#error incompatible preprocessor definition, please provide -DCFG_TUD_HID=2
+#endif
+
 #include "../kprintf.h"
 #include "../system.h"
 #include "../usbIoCore.h"
