@@ -40,13 +40,18 @@ async function start() {
 
     console.log("device opened");
 
-    window.addEventListener("mousedown", (e) => {
+    window.addEventListener("mousedown", async (e) => {
       if (e.button === 2) {
         console.log("send");
         const reportId = 0;
         const bytes = new Uint8Array(1);
         bytes[0] = 0xf2;
-        device.sendReport(reportId, bytes);
+        try {
+          await device.sendReport(reportId, bytes);
+        } catch (err) {
+          console.error(err);
+          console.log({ err });
+        }
       }
     });
   }
