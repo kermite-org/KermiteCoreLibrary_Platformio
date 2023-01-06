@@ -109,4 +109,6 @@ void usbIoCore_setSerialNumber(const char *serialNumberText) {
   USBDevice.setSerialDescriptor(serialNumberText);
 }
 
+void usbIoCore_processUpdate() {}
+
 #endif
