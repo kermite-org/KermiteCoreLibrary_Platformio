@@ -1,7 +1,6 @@
 function isDeviceRawHidInterface(device) {
   return device.collections.some(
     (col) => col.usagePage === 0xff00 && col.usage === 0x01
-    // (col) => col.usagePage === 0xffc0 && col.usage === 0x0c00
   );
 }
 

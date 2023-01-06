@@ -6,7 +6,7 @@ function start() {
   const deviceInfo = devices.find(
     (d) =>
       d.vendorId === 0xf055 &&
-      d.productId === 0xa57a &&
+      d.productId === 0xa579 &&
       d.usagePage === 0xff00 &&
       d.usage === 0x01
   );
