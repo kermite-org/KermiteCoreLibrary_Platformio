@@ -1,6 +1,7 @@
 function isDeviceRawHidInterface(device) {
   return device.collections.some(
     (col) => col.usagePage === 0xff00 && col.usage === 0x01
+    // (col) => col.usagePage === 0xffc0 && col.usage === 0x0c00
   );
 }
 
@@ -11,7 +12,10 @@ function delayMs(ms) {
 async function start() {
   const devices = (
     await navigator.hid.requestDevice({
-      filters: [{ vendorId: 0xf055, productId: 0xa57a }],
+      filters: [
+        { vendorId: 0xf055, productId: 0xa579 },
+        { vendorId: 0xf055, productId: 0xa57a },
+      ],
     })
   ).filter(isDeviceRawHidInterface);
 
@@ -34,7 +38,7 @@ async function start() {
       console.log({ rcvBytes });
     });
 
-    device.addEventListener("closed", () => {
+    device.addEventListener("disconnect", () => {
       console.log("closed");
     });
 
@@ -44,8 +48,9 @@ async function start() {
       if (e.button === 2) {
         console.log("send");
         const reportId = 0;
-        const bytes = new Uint8Array(1);
+        const bytes = new Uint8Array(64);
         bytes[0] = 0xf2;
+        // device.sendReport(reportId, bytes);
         try {
           await device.sendReport(reportId, bytes);
         } catch (err) {
