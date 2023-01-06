@@ -127,9 +127,9 @@ static void sendConsumerControlReport(uint8_t *pReportBytes2) {
   tud_hid_n_report(instance, reportId, pReportBytes2, 2);
 }
 
-static void sendRawHidReport(uint8_t *pDataBytes63) {
+static void sendRawHidReport(uint8_t *pDataBytes64) {
   const int instance = __USBGetHIDInstanceIndexForRawHID();
-  tud_hid_n_report(instance, 0, pDataBytes63, rawHidDataLength);
+  tud_hid_n_report(instance, 0, pDataBytes64, rawHidDataLength);
 }
 
 static void emitOneReportIfReady() {
@@ -156,16 +156,16 @@ void usbIoCore_hidConsumerControl_writeReport(uint8_t *pReportBytes2) {
   emitOneReportIfReady();
 }
 
-bool usbIoCore_rawHid_writeData(uint8_t *pDataBytes63) {
+bool usbIoCore_rawHid_writeData(uint8_t *pDataBytes64) {
   // kprintf("debug:%d %d %d %d %d\n", dvals[0], dvals[1], dvals[2], dvals[3], dvals[4]);
-  reportEmitterQueue_push(sendRawHidReport, pDataBytes63, rawHidDataLength);
+  reportEmitterQueue_push(sendRawHidReport, pDataBytes64, rawHidDataLength);
   emitOneReportIfReady();
   return true;
 }
 
-bool usbIoCore_rawHid_readDataIfExists(uint8_t *pDataBytes63) {
+bool usbIoCore_rawHid_readDataIfExists(uint8_t *pDataBytes64) {
   if (rawHidRxPageCount > 0) {
-    memcpy(pDataBytes63, rawHidRxBuf[--rawHidRxPageCount], rawHidDataLength);
+    memcpy(pDataBytes64, rawHidRxBuf[--rawHidRxPageCount], rawHidDataLength);
     return true;
   }
   return false;

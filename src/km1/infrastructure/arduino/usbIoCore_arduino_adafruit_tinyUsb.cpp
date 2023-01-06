@@ -11,42 +11,40 @@ enum {
   RID_KEYBOARD = 1,
   RID_MOUSE,
   RID_CONSUMER_CONTROL,
-  RID_GENERIC_HID
 };
 
-#define RAWHID_DATA_LENGTH 63
+static const int rawHidDataLength = 64;
 
 static const uint8_t descHidReportShared[] = {
   TUD_HID_REPORT_DESC_KEYBOARD(HID_REPORT_ID(RID_KEYBOARD)),
   TUD_HID_REPORT_DESC_MOUSE(HID_REPORT_ID(RID_MOUSE)),
   TUD_HID_REPORT_DESC_CONSUMER(HID_REPORT_ID(RID_CONSUMER_CONTROL)),
-  TUD_HID_REPORT_DESC_GENERIC_INOUT(RAWHID_DATA_LENGTH, HID_REPORT_ID(RID_GENERIC_HID)),
+};
+
+static const uint8_t descHidReportGeneric[] = {
+  TUD_HID_REPORT_DESC_GENERIC_INOUT(rawHidDataLength),
 };
 
 static Adafruit_USBD_HID hidShared(descHidReportShared, sizeof(descHidReportShared), HID_ITF_PROTOCOL_NONE, 2, true);
+static Adafruit_USBD_HID hidGeneric(descHidReportGeneric, sizeof(descHidReportGeneric), HID_ITF_PROTOCOL_NONE, 2, true);
 
-static uint8_t rawHidRxBuf[4][RAWHID_DATA_LENGTH];
+static uint8_t rawHidRxBuf[4][rawHidDataLength];
 static uint32_t rawHidRxPageCount = 0;
 
 static uint8_t keyboardLedStatus = 0;
 
 static void hidShared_setReportCallback(uint8_t reportId, hid_report_type_t reportType, uint8_t const *buffer, uint16_t bufsize) {
-  if (bufsize == RAWHID_DATA_LENGTH + 1) {
-    //retrieve report id from first byte
-    reportId = buffer[0];
-    buffer = buffer + 1;
-    bufsize -= 1;
-  }
-  // kprintf("received %d %d %d\n", reportId, reportType, bufsize);
-  // debugUtils_printBytes((uint8_t *)buffer, bufsize);
   if (reportId == RID_KEYBOARD && bufsize == 1) {
     keyboardLedStatus = buffer[0];
   }
-  if (reportId == RID_GENERIC_HID) {
-    if (rawHidRxPageCount < 4) {
-      memcpy(rawHidRxBuf[rawHidRxPageCount], buffer, bufsize);
-      rawHidRxPageCount++;
-    }
+}
+
+static void hidGeneric_setReportCallback(uint8_t reportId, hid_report_type_t reportType, uint8_t const *buffer, uint16_t bufsize) {
+  if (rawHidRxPageCount < 4 && bufsize <= rawHidDataLength) {
+    uint8_t *destBuf = rawHidRxBuf[rawHidRxPageCount];
+    memset(destBuf, 0, rawHidDataLength);
+    memcpy(destBuf, buffer, bufsize);
+    rawHidRxPageCount++;
   }
 }
 
@@ -57,6 +55,9 @@ void usbIoCore_initialize() {
 
   hidShared.setReportCallback(NULL, hidShared_setReportCallback);
   hidShared.begin();
+
+  hidGeneric.setReportCallback(NULL, hidGeneric_setReportCallback);
+  hidGeneric.begin();
 
   while (!USBDevice.mounted()) {
     system_delayMs(1);
@@ -123,12 +124,13 @@ static void sendConsumerControlReport(uint8_t *pReportBytes2) {
   hidShared.sendReport(RID_CONSUMER_CONTROL, pReportBytes2, 2);
 }
 
-static void sendRawHidReport(uint8_t *pDataBytes63) {
-  hidShared.sendReport(RID_GENERIC_HID, pDataBytes63, RAWHID_DATA_LENGTH);
+static void sendRawHidReport(uint8_t *pDataBytes64) {
+  hidGeneric.sendReport(0, pDataBytes64, rawHidDataLength);
 }
 
 static void emitOneReportIfReady() {
-  if (hidShared.ready()) {
+  //todo: peek individually
+  if (hidShared.ready() && hidGeneric.ready()) {
     reportEmitterQueue_emitOne();
   }
 }
@@ -148,18 +150,18 @@ void usbIoCore_hidConsumerControl_writeReport(uint8_t *pReportBytes2) {
   emitOneReportIfReady();
 }
 
+void usbIoCore_rawHid_writeData(uint8_t *pDataBytes64) {
+  reportEmitterQueue_push(sendRawHidReport, pDataBytes64, rawHidDataLength);
+  emitOneReportIfReady();
+}
+
 uint8_t usbIoCore_hidKeyboard_getStatusLedFlags() {
   return keyboardLedStatus;
 }
 
-void usbIoCore_rawHid_writeData(uint8_t *pDataBytes63) {
-  reportEmitterQueue_push(sendRawHidReport, pDataBytes63, 63);
-  emitOneReportIfReady();
-}
-
-bool usbIoCore_rawHid_readDataIfExists(uint8_t *pDataBytes63) {
+bool usbIoCore_rawHid_readDataIfExists(uint8_t *pDataBytes64) {
   if (rawHidRxPageCount > 0) {
-    memcpy(pDataBytes63, rawHidRxBuf[--rawHidRxPageCount], RAWHID_DATA_LENGTH);
+    memcpy(pDataBytes64, rawHidRxBuf[--rawHidRxPageCount], rawHidDataLength);
     return true;
   }
   return false;
