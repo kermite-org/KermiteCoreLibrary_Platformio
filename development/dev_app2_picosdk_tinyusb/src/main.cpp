@@ -7,8 +7,8 @@ extern void app3Entry();
 
 void setup() {
   // app0Entry();
-  // app1Entry();
-  app3Entry();
+  app1Entry();
+  // app3Entry();
 }
 
 void loop() {}

@@ -1,5 +1,5 @@
 #include "../buildCondition.h"
-#if defined(KERMITECORE_USE_FLASH_PERSIST_SECTOR_ADAFRUIT_SPIFLASH)
+#if defined(KERMITECORE_USE_FLASHSTORAGE_ADAFRUIT_SPIFLASH)
 
 #include "../flashPersistSector.h"
 #include <Adafruit_FlashTransport.h>
