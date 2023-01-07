@@ -3,8 +3,7 @@
   "ignorePaths": [],
   "dictionaryDefinitions": [],
   "dictionaries": [],
-  "words": [],
-  "ignoreWords": [
+  "words": [
     "kermite",
     "keycodes",
     "adafruit",
@@ -19,5 +18,6 @@
     "rawhid",
     "spiflash"
   ],
+  "ignoreWords": [],
   "import": []
 }
