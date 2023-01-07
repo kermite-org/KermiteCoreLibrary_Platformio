@@ -1,8 +1,9 @@
 #include <Arduino.h>
-#include <BoardLED.hpp>
-#include <BoardLED_NeoPixel.hpp>
 #include <KermiteCore.h>
-#include <SimpleButton.hpp>
+#include <kpm/BoardLED.h>
+#include <kpm/BoardLED_NeoPixel.h>
+#include <kpm/SimpleButton.h>
+
 
 static BoardLED boardLED(20, 19, 18, true); //tiny2040
 //static BoardLED boardLED(25, -1, -1, false); //pico

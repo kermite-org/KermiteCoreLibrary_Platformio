@@ -1,8 +1,7 @@
 #include <Arduino.h>
-#include <BoardLED_NeoPixel.hpp>
 #include <KermiteCore.h>
-#include <KeyMatrix.hpp>
-
+#include <kpm/BoardLED_NeoPixel.h>
+#include <kpm/KeyMatrix.h>
 
 KermiteCore kermite;
 
