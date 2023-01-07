@@ -5,7 +5,7 @@
 
 KermiteCore kermite;
 
-BoardLED_NeoPixel boardLED(25); //promicro rp2040
+BoardLED_NeoPixel boardLED(25, 0x40); //promicro rp2040
 
 const int numColumns = 7;
 const int numRows = 4;
@@ -23,7 +23,6 @@ void handleKeyStateChange(int keyIndex, bool pressed) {
 
 void setup() {
   boardLED.initialize();
-  boardLED.setBrightness(0x40);
 
   keyMatrix.setKeyStateListener(handleKeyStateChange);
   keyMatrix.initialize();

@@ -1,11 +1,6 @@
 #pragma once
 #include <Arduino.h>
 
-enum {
-  LED_OFF = 0,
-  LED_ON = 1
-};
-
 class BoardLED {
 private:
   bool invert;

@@ -1,10 +1,10 @@
-#pragma once
 #include <Adafruit_NeoPixel.h>
 #include <Arduino.h>
 
 class BoardLED_NeoPixel {
 private:
   Adafruit_NeoPixel neoPixel;
+  uint8_t brightness;
   bool states[3] = { false, false, false };
   int powerPin;
 
@@ -26,17 +26,14 @@ private:
   }
 
 public:
-  BoardLED_NeoPixel(int pin, int _powerPin = -1)
-      : neoPixel(1, pin, NEO_BGR), powerPin(_powerPin) {}
+  BoardLED_NeoPixel(int pin, int _brightness = 0xFF, int _powerPin = -1)
+      : neoPixel(1, pin, NEO_BGR), brightness(_brightness), powerPin(_powerPin) {}
 
   void initialize() {
     if (powerPin != -1) {
       pinMode(powerPin, OUTPUT);
       digitalWrite(powerPin, HIGH);
     }
-  }
-
-  void setBrightness(uint8_t brightness) {
     neoPixel.setBrightness(brightness);
   }
 
