@@ -8,12 +8,11 @@ The application is a simple keyboard with one-key and one-LED. It is used to che
 
 There is 2 configuration targets in platformio.ini.
 - `[env:generic]` is used for normal development.
-- `[env:portable_stack]` is a special setting which utilize portable version of the hardware dependent modules.
+- `[env:portable_stack]` is a special setting which uses portable version of the hardware dependent modules.
 
 ## Configurations (`app.cpp`)
 
 In `src/app.cpp`, there is a LED and button configurations part. please change them according to your board.
-
 
 ## Build and debug
 
