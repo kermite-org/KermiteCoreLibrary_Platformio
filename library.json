@@ -13,7 +13,7 @@
     }
   ],
   "license": "MIT",
-  "homepage": "https://kermite.org",
+  "homepage": "https://github.com/kermite-org/KermiteCore_Arduino",
   "frameworks": "arduino",
   "platforms": "raspberrypi"
 }
