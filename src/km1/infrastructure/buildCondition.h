@@ -14,5 +14,5 @@
 #endif
 
 #if defined(KERMITECORE_USE_FLASHSTORAGE_ADAFRUIT_SPIFLASH)
-#include <Adafruit_SPIFlash.h> //tell LDF to depends on this
+#include <Adafruit_SPIFlash.h> //tell LDF to depend on this
 #endif
