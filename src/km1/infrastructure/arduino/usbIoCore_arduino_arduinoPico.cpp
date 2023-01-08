@@ -71,8 +71,8 @@ static int reportQueue_wi = 0;
 static int reportQueue_ri = 0;
 
 static void reportEmitterQueue_push(ReportEmitterFn fn, uint8_t *report, int len) {
-  if ((reportQueue_wi + 1) & 7 == reportQueue_ri) {
-    kprintf("cannot enqueue hid report (8/8)\n");
+  if (((reportQueue_wi + 1) & 7) == reportQueue_ri) {
+    kprintf("cannot enqueue hid report (8/8)n");
   } else {
     uint8_t *reportBytes = new uint8_t[len];
     memcpy(reportBytes, report, len);
