@@ -4,14 +4,16 @@
 #include <kpm/BoardLED_NeoPixel.h>
 #include <kpm/SimpleButton.h>
 
+// static BoardLED boardLED(25); //pico
+// static BoardLED boardLED(18, 19, 20, true); //tiny2040
+static BoardLED_NeoPixel boardLED(17, 0x40); //kb2040
+// static BoardLED_NeoPixel boardLED(12, 0x40, 11); //xiao rp2040
+// static BoardLED_NeoPixel boardLED(16, 0x40); //rp2040-zero
+// static BoardLED_NeoPixel boardLED(12, 0x40, 11); //qt py rp2040
+// static BoardLED_NeoPixel boardLED(25, 0x40); //promicro rp2040
+// static BoardLED_NeoPixel boardLED(23, 0x40); //yd-rp2040
 
-static BoardLED boardLED(20, 19, 18, true); //tiny2040
-//static BoardLED boardLED(25, -1, -1, false); //pico
-//static BoardLED_NeoPixel boardLED(17, 0x40); //kb2040
-//static BoardLED_NeoPixel boardLED(16, 0x10); //rp2040-zero
-//static BoardLED_NeoPixel boardLED(12, 0x40, 11); //xiao rp2040
-
-static SimpleButton button(23); //set an input pin for your board
+static SimpleButton button(6); //set an input pin for your board
 
 static KermiteCore kermite;
 static bool pressed;
