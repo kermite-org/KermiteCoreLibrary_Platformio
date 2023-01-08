@@ -1,3 +1,5 @@
+#pragma once
+
 #if defined(ARDUINO_ARCH_RP2040) && !defined(KERMITECORE_MANUAL_STACK_CONFIG)
 //default stack configuration for RP2040
 
@@ -9,4 +11,8 @@
 
 #define KERMITECORE_USE_FLASHSTORAGE_RP2040_PICO_SDK
 
+#endif
+
+#if defined(KERMITECORE_USE_FLASHSTORAGE_ADAFRUIT_SPIFLASH)
+#include <Adafruit_SPIFlash.h> //tell LDF to depends on this
 #endif
