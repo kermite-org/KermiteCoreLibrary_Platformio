@@ -37,13 +37,13 @@ default_envs=generic
 In `src/app.cpp`, there is a LED and button configurations part. please change them according to your board.
 
 ```c
-static BoardLED boardLED(20, 19, 18, true); //tiny2040
-//static BoardLED boardLED(25, -1, -1, false); //pico
-//static BoardLED_NeoPixel boardLED(17, 0x40); //kb2040
-//static BoardLED_NeoPixel boardLED(16, 0x10); //rp2040-zero
-//static BoardLED_NeoPixel boardLED(12, 0x40, 11); //xiao rp2040
+static BoardLED boardLED(25); //pico
+// static BoardLED boardLED(18, 19, 20, true); //tiny2040
+// static BoardLED_NeoPixel boardLED(17, 0x40); //kb2040
+// static BoardLED_NeoPixel boardLED(12, 0x40, 11); //xiao rp2040
+// ...
 
-static Button button(23); //set an input pin for your board
+static SimpleButton button(6); //set an input pin for your board
 ```
 
 ## Build and debug
