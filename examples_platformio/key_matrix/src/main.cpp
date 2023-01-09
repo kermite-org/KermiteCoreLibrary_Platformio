@@ -1,12 +1,21 @@
 #include <Arduino.h>
 #include <KermiteCore.h>
-#include <kpm/BoardLED_NeoPixel.h>
-#include <kpm/KeyMatrix.h>
+//Libary keyboard_peripheral_modules is also required to run this example
+#include <keyboard_peripheral_modules.h>
+
+//example for a keyboard with key matrix, with board LED control
+
+//select an appropriate boardLED initializer for your board
+//BoardLED boardLED(25, 25); //pico
+//BoardLED boardLED(18, 19, 20, true); //tiny2040
+//BoardLED_NeoPixel boardLED(17, 0x40); //kb2040
+//BoardLED_NeoPixel boardLED(12, 0x40, 11); //xiao rp2040
+//BoardLED_NeoPixel boardLED(16, 0x40); //rp2040-zero
+BoardLED_NeoPixel boardLED(25, 0x40); //promicro rp2040
 
 KermiteCore kermite;
 
-BoardLED_NeoPixel boardLED(25, 0x40); //promicro rp2040
-
+//set numColumns, numRows, pinColumns, pinRows according to your board
 const int numColumns = 7;
 const int numRows = 4;
 const int pinColumns[numColumns] = { 28, 27, 26, 22, 20, 23, 21 };
@@ -19,6 +28,7 @@ int pressedKeyCount = 0;
 void handleKeyStateChange(int keyIndex, bool pressed) {
   kermite.feedKeyState(keyIndex, pressed);
   pressedKeyCount += (pressed ? 1 : -1);
+  boardLED.write(1, pressedKeyCount > 0);
 }
 
 void setup() {
@@ -33,10 +43,9 @@ void setup() {
 
 void loop() {
   static int count = 0;
-  boardLED.write(0, count % 2000 == 0);
+  boardLED.write(0, count % 1000 == 0);
   if (count % 10 == 0) {
     keyMatrix.updateInput();
-    boardLED.write(2, pressedKeyCount > 0);
   }
   kermite.processUpdate();
   count++;
