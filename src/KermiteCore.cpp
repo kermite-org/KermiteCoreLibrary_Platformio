@@ -1,8 +1,10 @@
 #include "KermiteCore.h"
+#include "km1/domain/dataMemory.h"
 #include "km1/domain/firmwareMetadata.h"
 #include "km1/domain/keyboardMain.h"
 #include "km1/infrastructure/kprintf.h"
 #include "km1/infrastructure/usbIoCore.h"
+
 
 KermiteCore::KermiteCore() {
   firmwareMetadata_initialize();
@@ -31,4 +33,8 @@ void KermiteCore::feedKeyState(int keyIndex, bool pressed) {
 void KermiteCore::processUpdate() {
   keyboardMain_processUpdate();
   usbIoCore_processUpdate();
+}
+
+void KermiteCore::setFlashSavingWaitTimeSec(int sec) {
+  dataMemory_setSavingWaitTimeSec(sec);
 }

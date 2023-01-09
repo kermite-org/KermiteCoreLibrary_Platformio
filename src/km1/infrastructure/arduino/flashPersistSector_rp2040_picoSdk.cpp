@@ -22,14 +22,16 @@ void flashPersistSector_read(uint8_t *bytes4096) {
   }
 }
 
-void flashPersistSector_write(uint8_t *bytes4096) {
+bool flashPersistSector_write(uint8_t *bytes4096) {
   if (fileSystemAreaSize > 0) {
     uint32_t status = save_and_disable_interrupts();
     uint32_t flashTargetOffset = persistSectorAddr - XIP_BASE;
     flash_range_erase(flashTargetOffset, FLASH_SECTOR_SIZE);
     flash_range_program(flashTargetOffset, bytes4096, FLASH_SECTOR_SIZE);
     restore_interrupts(status);
+    return true;
   }
+  return false;
 }
 
 #endif

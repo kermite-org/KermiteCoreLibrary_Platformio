@@ -3,6 +3,8 @@
 
 #include "../flashPersistSector.h"
 void flashPersistSector_read(uint8_t *bytes4096) {}
-void flashPersistSector_write(uint8_t *bytes4096) {}
+bool flashPersistSector_write(uint8_t *bytes4096) {
+  return false;
+}
 
 #endif

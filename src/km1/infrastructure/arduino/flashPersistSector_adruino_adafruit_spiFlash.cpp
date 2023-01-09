@@ -36,12 +36,14 @@ void flashPersistSector_read(uint8_t *bytes4096) {
     flash.readBuffer(locationOffset, bytes4096, persistDataSize);
   }
 }
-void flashPersistSector_write(uint8_t *bytes4096) {
+bool flashPersistSector_write(uint8_t *bytes4096) {
   ensureInitialized();
   if (locationOffset >= 0) {
     flash.eraseSector(locationOffset / 4096);
     flash.writeBuffer(locationOffset, bytes4096, persistDataSize);
+    return true;
   }
+  return false;
 }
 
 #endif

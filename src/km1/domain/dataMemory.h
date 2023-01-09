@@ -13,3 +13,5 @@ void dataMemory_clearAllZero();
 
 void dataMemory_initialize();
 void dataMemory_processTick();
+
+void dataMemory_setSavingWaitTimeSec(int sec);

@@ -2,22 +2,28 @@
 
 #include "dataMemory.h"
 #include "../infrastructure/flashPersistSector.h"
+#include "../infrastructure/kprintf.h"
 #include <string.h>
 
 static const uint32_t persistDataSize = flashPersistSector_DataSize;
 static uint8_t ramData[persistDataSize];
 static uint32_t saveCount = 0;
 
+static int savingWaitTimeSec = 5;
+
 static void loadRamDataFromFlash() {
   flashPersistSector_read(ramData);
 }
 
 static void storeRamDataToFlash() {
-  flashPersistSector_write(ramData);
+  bool written = flashPersistSector_write(ramData);
+  if (written) {
+    kprintf("data saved.\n");
+  }
 }
 
 static void saveLazy() {
-  saveCount = 1000;
+  saveCount = savingWaitTimeSec * 1000;
 }
 
 static void processSaving() {
@@ -74,4 +80,8 @@ void dataMemory_initialize() {
 
 void dataMemory_processTick() {
   processSaving();
+}
+
+void dataMemory_setSavingWaitTimeSec(int sec) {
+  savingWaitTimeSec = sec;
 }
