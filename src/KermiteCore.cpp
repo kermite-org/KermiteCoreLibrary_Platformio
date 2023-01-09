@@ -5,7 +5,6 @@
 #include "km1/infrastructure/kprintf.h"
 #include "km1/infrastructure/usbIoCore.h"
 
-
 KermiteCore::KermiteCore() {
   firmwareMetadata_initialize();
 }
@@ -37,4 +36,8 @@ void KermiteCore::processUpdate() {
 
 void KermiteCore::setFlashSavingWaitTimeSec(int sec) {
   dataMemory_setSavingWaitTimeSec(sec);
+}
+
+void KermiteCore::setProductionMode() {
+  usbIoCore_stopUsbSerial();
 }

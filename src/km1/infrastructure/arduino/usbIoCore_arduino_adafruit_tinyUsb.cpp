@@ -188,4 +188,7 @@ void usbIoCore_processUpdate() {
   emitOneReportIfReady();
 }
 
+void usbIoCore_stopUsbSerial() {
+  Serial.end();
+}
 #endif

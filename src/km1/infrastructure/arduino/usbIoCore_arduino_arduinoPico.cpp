@@ -3,6 +3,7 @@
 
 #include "../kprintf.h"
 #include "RP2040USB.h"
+#include "SerialUSB.h"
 #include "tusb.h"
 
 void __USBInstallKeyboard() {}
@@ -185,6 +186,11 @@ void usbIoCore_setSerialNumber(const char *serialNumberText) {
 
 void usbIoCore_processUpdate() {
   emitOneReportIfReady();
+}
+
+void usbIoCore_stopUsbSerial() {
+  //not supported
+  // Serial.end();
 }
 
 #endif

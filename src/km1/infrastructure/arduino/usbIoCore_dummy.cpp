@@ -31,4 +31,5 @@ void usbIoCore_setSerialNumber(const char *serialNumberText) {}
 
 void usbIoCore_processUpdate() {}
 
+void usbIoCore_stopUsbSerial() {}
 #endif
