@@ -6,7 +6,7 @@
 //single-key keyboard example, with board LED control
 
 //select an appropriate boardLED initializer for your board
-//BoardLED boardLED(25, 25); //pico
+//BoardLED boardLED(25); //pico
 //BoardLED boardLED(18, 19, 20, true); //tiny2040
 BoardLED_NeoPixel boardLED(17, 0x40); //kb2040
 //BoardLED_NeoPixel boardLED(12, 0x40, 11); //xiao rp2040
