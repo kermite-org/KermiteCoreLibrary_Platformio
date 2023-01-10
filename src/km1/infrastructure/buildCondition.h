@@ -17,6 +17,10 @@
 #include <Adafruit_SPIFlash.h> //tell LDF to depend on this
 #endif
 
+#if defined(KEMRITECORE_USE_USBIOCORE_ADAFRUIT_TINYUSB)
+#include <Adafruit_TinyUSB.h> //tell LDF to depend on this
+#endif
+
 #if defined(KERMITECORE_PRODUCTION_MODE)
 const bool buildCondition_kermiteCore_productionMode = true;
 #else
