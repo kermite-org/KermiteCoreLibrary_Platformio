@@ -12,10 +12,6 @@ void KermiteCore::setKeyboardName(const char *keyboardName) {
   firmwareMetaData_setKeyboardName(keyboardName);
 }
 
-void KermiteCore::setFirmwareId(const char *firmwareId) {
-  firmwareMetaData_setFirmwareId(firmwareId);
-}
-
 void KermiteCore::enableDebugLogging() { kprintf_turnOnDebugLogging(); }
 
 void KermiteCore::begin() {
