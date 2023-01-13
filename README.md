@@ -41,7 +41,7 @@ Launch Arduino IDE.
 
 ## Setup Board package
 
-RP2040 is not supported officially by Arduino.
+3rd party RP2040 based board is not supported officially by Arduino.
 A board package forked from arduino-pico (earlephilhower) is used here. It is modified to support USB RawHID feature and has some adjustment to make it easy to create a keyboard firmware.
 
 ### Add board manager URL
