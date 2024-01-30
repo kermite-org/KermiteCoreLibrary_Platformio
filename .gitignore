@@ -1,2 +1,5 @@
 .local/
 /development__local/
+
+.vscode/c_cpp_properties.json
+

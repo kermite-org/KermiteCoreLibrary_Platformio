@@ -227,23 +227,23 @@ static void shiftParameter(uint8_t parameterIndex, int dir, bool roll) {
 void configManager_handleSystemAction(uint8_t code, uint8_t payloadValue) {
   // kprintf("handle system action %d %d\n", code, payloadValue);
   if (code == SystemAction_GlowToggle) {
-    uint8_t isOn = systemParameterValues[SystemParameter_GlowActive__Deprecated];
-    writeParameter(SystemParameter_GlowActive__Deprecated, isOn ^ 1);
+    uint8_t isOn = systemParameterValues[SystemParameter_GlowActive];
+    writeParameter(SystemParameter_GlowActive, isOn ^ 1);
   }
   if (code == SystemAction_GlowPatternRoll) {
-    shiftParameter(SystemParameter_GlowPattern__Deprecated, 1, true);
+    shiftParameter(SystemParameter_GlowPattern, 1, true);
   }
   if (code == SystemAction_GlowColorPrev) {
-    shiftParameter(SystemParameter_GlowColor__Deprecated, -1, true);
+    shiftParameter(SystemParameter_GlowColor, -1, true);
   }
   if (code == SystemAction_GlowColorNext) {
-    shiftParameter(SystemParameter_GlowColor__Deprecated, 1, true);
+    shiftParameter(SystemParameter_GlowColor, 1, true);
   }
   if (code == SystemAction_GlowBrightnessMinus) {
-    shiftParameter(SystemParameter_GlowBrightness__Deprecated, -16, false);
+    shiftParameter(SystemParameter_GlowBrightness, -16, false);
   }
   if (code == SystemAction_GlowBrightnessPlus) {
-    shiftParameter(SystemParameter_GlowBrightness__Deprecated, 16, false);
+    shiftParameter(SystemParameter_GlowBrightness, 16, false);
   }
   if (code == SystemAction_ResetToDfuMode) {
     reqRestToDfu = true;

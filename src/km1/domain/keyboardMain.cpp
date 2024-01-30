@@ -215,9 +215,9 @@ static void parameterValueHandler(uint8_t eventType, uint8_t slotIndex, uint8_t 
 
   if (slotIndex == SystemParameter_EmitRealtimeEvents) {
     optionEmitRealtimeEvents = !!value;
-  } else if (slotIndex == SystemParameter_KeyHoldIndicatorLed__Deprecated) {
+  } else if (slotIndex == SystemParameter_KeyHoldIndicatorLed) {
     // optionAffectKeyHoldStateToLed = !!value;
-  } else if (slotIndex == SystemParameter_HeartbeatLed__Deprecated) {
+  } else if (slotIndex == SystemParameter_HeartbeatLed) {
     // optionUseHeartbeatLed = !!value;
   } else if (slotIndex == SystemParameter_MasterSide__Deprecated) {
     //value: (0:left, 1:right)
