@@ -4,11 +4,11 @@
 #include <string.h>
 
 CommonFirmwareMetadata commonFirmwareMetadata = {
-  "$KMME",            //dataHeader
-  "000000",           //projectId
-  "00",               //variationId
-  "0000",             //deviceInstanceCode
-  "unnamed keyboard", //keyboardName
+  { '$', 'K', 'M', 'M', 'D' }, //dataHeader
+  "000000",                    //projectId
+  "00",                        //variationId
+  "0000",                      //deviceInstanceCode
+  "unnamed keyboard",          //keyboardName
 };
 
 CommonFirmwareMetadataSecond commonFirmwareMetadataSecond = {

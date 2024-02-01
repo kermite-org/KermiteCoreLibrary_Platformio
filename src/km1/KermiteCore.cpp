@@ -1,10 +1,10 @@
 #include "KermiteCore.h"
-#include "km1/domain/dataMemory.h"
-#include "km1/domain/firmwareMetadata.h"
-#include "km1/domain/keyboardMain.h"
-#include "km1/infrastructure/buildCondition.h"
-#include "km1/infrastructure/kprintf.h"
-#include "km1/infrastructure/usbIoCore.h"
+#include "domain/dataMemory.h"
+#include "domain/firmwareMetadata.h"
+#include "domain/keyboardMain.h"
+#include "infrastructure/buildCondition.h"
+#include "infrastructure/kprintf.h"
+#include "infrastructure/usbIoCore.h"
 
 KermiteCore::KermiteCore() { firmwareMetadata_initialize(); }
 
