@@ -58,6 +58,7 @@ void usbIoCore_initialize() {
   // USBDevice.setID(0xF055, 0xA57A); //for debugging
   USBDevice.setManufacturerDescriptor("Kermite");
 
+  hidShared.setBootProtocol(1);
   hidShared.setReportCallback(NULL, hidShared_setReportCallback);
   hidShared.begin();
 
